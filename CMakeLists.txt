@@ -1,0 +1,16 @@
+﻿# CMakeList.txt : CMake project for EpiSim, include source and define
+# project specific logic here.
+#
+cmake_minimum_required (VERSION 3.8)
+
+project ("EpiSim")
+
+# Add source to this project's executable.
+
+add_subdirectory("libs/SDL2")
+
+add_executable (EpiSim "EpiSim.cpp" "EpiSim.h" "render/render.h" "render/sdlRender.cpp" "render/sdlRender.h")
+target_link_libraries(EpiSim SDL2-static SDL2main)
+target_include_directories(EpiSim PUBLIC "libs/SDL2/include/")
+
+# TODO: Add tests and install targets if needed.
