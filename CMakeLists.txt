@@ -12,6 +12,8 @@ add_subdirectory("libs/SDL2")
 add_executable (EpiSim "EpiSim.cpp" "EpiSim.h" "render/render.h" "render/sdlRender.cpp" "render/sdlRender.h" "tracy/TracyClient.cpp")
 target_link_libraries(EpiSim SDL2-static SDL2main)
 target_include_directories(EpiSim PUBLIC "libs/SDL2/include/")
-
-target_compile_definitions(EpiSim PUBLIC TRACY_ENABLE)
+IF(CMAKE_BUILD_TYPE MATCHES DEBUG)
+    message("Enabling Tracy support as this is a debug mode")
+    target_compile_definitions(EpiSim PUBLIC TRACY_ENABLE)
+ENDIF(CMAKE_BUILD_TYPE MATCHES DEBUG)
 # TODO: Add tests and install targets if needed.
