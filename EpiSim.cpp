@@ -18,6 +18,7 @@ int main(int argc, char* argv[])
 		testSubject.x %= 1024;
 		std::vector<human> humans = { testSubject };
 		rend->drawScreen(humans);
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000 / 60));
 	}
 	return 0;
 }
