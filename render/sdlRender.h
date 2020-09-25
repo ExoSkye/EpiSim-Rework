@@ -9,7 +9,7 @@ private:
 	SDL_Window* window;
 	SDL_Renderer* renderer;
 public:
-	bool init() override;
+	bool init(int x, int y) override;
 	bool drawScreen(std::vector<human> toDraw) override;
 	~sdlRenderer();
 };
