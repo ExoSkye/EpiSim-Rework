@@ -16,7 +16,7 @@ bool sdlRenderer::drawScreen(std::vector<human> toDraw)
 	SDL_RenderClear(renderer);
 	for (human curHuman : toDraw)
 	{
-		color curHumanColor = curHuman.possibleColors[(int)curHuman.infect_info];
+		color curHumanColor = possibleColors[(int)curHuman.infect_info];
 		SDL_SetRenderDrawColor(renderer, curHumanColor.r, curHumanColor.g, curHumanColor.b, 255);
 		SDL_RenderDrawPoint(renderer, curHuman.x, curHuman.y);
 	}

@@ -9,7 +9,7 @@ project ("EpiSim")
 
 add_subdirectory("libs/SDL2")
 
-add_executable (EpiSim "EpiSim.cpp" "EpiSim.h" "render/render.h" "render/sdlRender.cpp" "render/sdlRender.h" "tracy/TracyClient.cpp")
+add_executable (EpiSim "EpiSim.cpp" "EpiSim.h" "render/render.h" "render/sdlRender.cpp" "render/sdlRender.h" "tracy/TracyClient.cpp" "algorithm.h" "algorithm.cpp")
 target_link_libraries(EpiSim SDL2-static SDL2main)
 target_include_directories(EpiSim PUBLIC "libs/SDL2/include/")
 IF(CMAKE_BUILD_TYPE MATCHES DEBUG)
