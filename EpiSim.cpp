@@ -8,7 +8,7 @@
 int main(int argc, char* argv[])
 {
 	renderer* rend = new sdlRenderer();
-	rend->init();
+	rend->init(1024,1024);
 	human testSubject;
 	testSubject.infect_info = infectInfo::infectious;
 	testSubject.x = 10;
