@@ -2,7 +2,9 @@
 //
 
 #include "EpiSim.h"
-
+#ifdef TRACY_ENABLE
+#pragma message("Tracy is enabled")
+#endif
 int main(int argc, char* argv[])
 {
 	renderer* rend = new sdlRenderer();
