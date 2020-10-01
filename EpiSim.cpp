@@ -7,18 +7,36 @@
 #endif
 int main(int argc, char* argv[])
 {
-	renderer* rend = new sdlRenderer();
-	rend->init(1024,1024);
-	human testSubject;
-	testSubject.infect_info = infectInfo::infectious;
-	testSubject.x = 10;
-	testSubject.y = 10;
+	algo* algorithm;
+	renderer* rend;
+	std::vector<human> humans;
+	{
+		ZoneScopedN("Init");
+		rend = new sdlRenderer();
+		std::default_random_engine* rand = new std::default_random_engine();
+		algorithm = new singleAlgo<1024,1024>();
+		rend->init(1024, 1024);
+		human testSubject;
+		testSubject.infect_info = infectInfo::susceptible;
+		humans.resize(10240, testSubject);
+		for (human& person : humans)
+		{
+			person.x = (rand->operator()() % 1024);
+			person.y = (rand->operator()() % 1024);
+		}
+		humans[1].infect_info = infectInfo::infectious;
+	}
 	while (true) {
-		testSubject.x++;
-		testSubject.x %= 1024;
-		std::vector<human> humans = { testSubject };
-		rend->drawScreen(humans);
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000 / 60));
+		{
+			ZoneScopedN("Algorithm")
+			algorithm->run(&humans, 10, 6);
+			algorithm->run(&humans, 10, 6);
+		}
+		{
+			ZoneScopedN("Drawing")
+			rend->drawScreen(humans);
+		}
+		FrameMark
 	}
 	return 0;
 }

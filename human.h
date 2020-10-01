@@ -1,4 +1,6 @@
 #pragma once
+#ifndef human_imp
+#define human_imp
 struct color
 {
 	int r;
@@ -14,7 +16,7 @@ enum class infectInfo
 	immune,
 	dead,
 };
-color possibleColors[5] = { color{ 255,255,255 },color{ 255,0,0 },color{ 255,255,0 },color{ 0,255,0 },color{ 64,64,64 }, };
+static color possibleColors[5] = { color{ 255,255,255 },color{ 255,0,0 },color{ 255,255,0 },color{ 0,255,0 },color{ 64,64,64 }, };
 
 struct human
 {
@@ -23,3 +25,4 @@ struct human
 	infectInfo infect_info;
 	//TODO: Add more entries as needed
 };
+#endif

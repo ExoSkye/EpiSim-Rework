@@ -1,25 +1,24 @@
 #pragma once
-#include <vector>
-#include <random>
-#include "human.h"
-#include "tracy/Tracy.hpp"
-struct square
+#include <thread>
+#include "algorithm.h"
+
+
+struct threadCreation
 {
-	int x1, x2, y1, y2;
+	std::vector<human>*& humans;
+	int infectChance;
+	int infectRadius;
+	int start;
+	int stop;
 };
 
-class algo
-{
-public:
-	virtual void run(std::vector<human>* humans, int infectChance, int infectRadius) = 0;
-};
-
-class singleCPUalgo : public algo
+class multiThreadNaive : public algo
 {
 private:
 	int move_[7][2] = { {0,0},{0,1},{1,0},{1,1},{0,-1},{-1,0},{-1,-1} };
 	bool checkRadius(square checkBox, int px, int py);
 	std::default_random_engine* random_ = nullptr;
+	void threaded(threadCreation threadCreateInfo);
 public:
 	void run(std::vector<human>* humans, int infectChance, int infectRadius) override;
 };
