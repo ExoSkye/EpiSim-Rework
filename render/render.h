@@ -1,6 +1,9 @@
 #pragma once
 #include "../human.h"
 #include <vector>
+#ifdef _DEBUG
+#include <cstdio>
+#endif
 
 class renderer
 {

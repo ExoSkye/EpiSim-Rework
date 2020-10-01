@@ -11,6 +11,7 @@ int main(int argc, char* argv[])
 	renderer* rend;
 	std::vector<human> humans;
 	{
+
 		ZoneScopedN("Init");
 		rend = new sdlRenderer();
 		std::default_random_engine* rand = new std::default_random_engine();
@@ -29,7 +30,6 @@ int main(int argc, char* argv[])
 	while (true) {
 		{
 			ZoneScopedN("Algorithm")
-			algorithm->run(&humans, 10, 6);
 			algorithm->run(&humans, 10, 6);
 		}
 		{

@@ -7,7 +7,7 @@ project ("EpiSim")
 
 # Add source to this project's executable.
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 
 add_subdirectory("libs/SDL2")
 
@@ -16,6 +16,6 @@ target_link_libraries(EpiSim SDL2-static SDL2main)
 target_include_directories(EpiSim PUBLIC "libs/SDL2/include/")
 IF(CMAKE_BUILD_TYPE MATCHES Debug)
     message("Enabling Tracy support as this is debug mode")
-    target_compile_definitions(EpiSim PUBLIC TRACY_ENABLE)
+    target_compile_definitions(EpiSim PUBLIC TRACY_ENABLE _DEBUG)
 ENDIF(CMAKE_BUILD_TYPE MATCHES Debug)
 # TODO: Add tests and install targets if needed.

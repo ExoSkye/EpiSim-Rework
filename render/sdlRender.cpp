@@ -3,8 +3,14 @@
 bool sdlRenderer::init(int x, int y)
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
-	window = SDL_CreateWindow("EpiSim", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, x, y, SDL_WINDOW_ALLOW_HIGHDPI);
+	window = SDL_CreateWindow("EpiSim", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, x, y, 0);
+#ifdef _DEBUG
+    printf("SDL (After window creation) Current error = %s",SDL_GetError());
+#endif
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+#ifdef _DEBUG
+    printf("SDL (After renderer creation) Current error = %s",SDL_GetError());
+#endif
 	return (window == nullptr || renderer == nullptr);
 }
 
