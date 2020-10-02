@@ -6,7 +6,7 @@ bool singleCPUalgo::checkRadius(square checkBox, int px, int py)
 }
 
 
-void singleCPUalgo::run(std::vector<human>* humans, int infectChance, int infectRadius)
+void singleCPUalgo::run(std::vector<human>* humans, int infectChance, int infectRadius, int x, int y)
 {
 	if (random_ == nullptr)
 	{

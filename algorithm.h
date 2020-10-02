@@ -11,7 +11,7 @@ struct square
 class algo
 {
 public:
-	virtual void run(std::vector<human>* humans, int infectChance, int infectRadius) = 0;
+	virtual void run(std::vector<human>* humans, int infectChance, int infectRadius,int x, int y) = 0;
 };
 
 class singleCPUalgo : public algo
@@ -21,5 +21,5 @@ private:
 	bool checkRadius(square checkBox, int px, int py);
 	std::default_random_engine* random_ = nullptr;
 public:
-	void run(std::vector<human>* humans, int infectChance, int infectRadius) override;
+	void run(std::vector<human>* humans, int infectChance, int infectRadius, int x, int y) override;
 };
