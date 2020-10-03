@@ -7,6 +7,21 @@
 #endif
 int main(int argc, char* argv[])
 {
+    int x, y, population, infectChance, infectRadius, length;
+    {
+        ZoneScopedN("Read Config");
+        INIReader reader("./conf.ini");
+        if (reader.ParseError() != 0) {
+            printf("Can't load 'conf.ini'\n");
+            return 1;
+        }
+        x = reader.GetInteger("Window","x",1024);
+        y = reader.GetInteger("Window","y",1024);
+        population = reader.GetInteger("Simulation","population",10240);
+        infectChance = reader.GetInteger("Simulation","infectChance",10);
+        infectRadius = reader.GetInteger("Simulation","infectRadius",6);
+        length = reader.GetInteger("Simulation","length",1000);
+    }
 	algo* algorithm;
 	renderer* rend;
 	std::vector<human> humans;
@@ -16,23 +31,21 @@ int main(int argc, char* argv[])
 		rend = new sdlRenderer();
 		auto* rand = new std::default_random_engine();
 		algorithm = new singleAlgo();
-		rend->init(1024, 1024);
+		rend->init(x, y);
 		human testSubject{};
 		testSubject.infect_info = infectInfo::susceptible;
-		humans.resize(10240, testSubject);
+		humans.resize(population, testSubject);
 		for (human& person : humans)
 		{
 			person.x = (rand->operator()() % 1024);
 			person.y = (rand->operator()() % 1024);
 		}
 		humans[1].infect_info = infectInfo::infectious;
-	    humans[1].x = 1023;
-	    humans[1].y = 1023;
 	}
-	for (int i = 0; i < 1000; i++){
+	for (int i = 0; i < length; i++) {
 		{
 			ZoneScopedN("Algorithm")
-			algorithm->run(&humans, 10, 6,1024,1024);
+			algorithm->run(&humans, infectChance, infectRadius,x,y);
 		}
 		{
 			ZoneScopedN("Drawing")

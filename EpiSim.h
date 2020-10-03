@@ -9,6 +9,7 @@
 #include <random>
 #include "algononnaive.h"
 #include "grapher.hpp"
+#include "libs/inih/INIReader.h"
 
 #ifdef TRACY_ENABLE
 void* operator new(std::size_t count) {
