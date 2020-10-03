@@ -14,20 +14,22 @@ int main(int argc, char* argv[])
 
 		ZoneScopedN("Init");
 		rend = new sdlRenderer();
-		std::default_random_engine* rand = new std::default_random_engine();
+		auto* rand = new std::default_random_engine();
 		algorithm = new singleAlgo();
 		rend->init(1024, 1024);
-		human testSubject;
+		human testSubject{};
 		testSubject.infect_info = infectInfo::susceptible;
-		humans.resize(1024, testSubject);
+		humans.resize(10240, testSubject);
 		for (human& person : humans)
 		{
 			person.x = (rand->operator()() % 1024);
 			person.y = (rand->operator()() % 1024);
 		}
 		humans[1].infect_info = infectInfo::infectious;
+	    humans[1].x = 1023;
+	    humans[1].y = 1023;
 	}
-	while (true) {
+	for (int i = 0; i < 5000; i++){
 		{
 			ZoneScopedN("Algorithm")
 			algorithm->run(&humans, 10, 6,1024,1024);
@@ -36,7 +38,9 @@ int main(int argc, char* argv[])
 			ZoneScopedN("Drawing")
 			rend->drawScreen(humans);
 		}
-		FrameMark
+		FrameMark;
 	}
+	delete rend;
+	delete algorithm;
 	return 0;
 }

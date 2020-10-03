@@ -8,6 +8,7 @@
 #include <thread>
 #include <random>
 #include "algononnaive.h"
+#include "grapher.hpp"
 
 #ifdef TRACY_ENABLE
 void* operator new(std::size_t count) {
