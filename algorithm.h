@@ -12,6 +12,7 @@ class algo
 {
 public:
 	virtual void run(std::vector<human>* humans, int infectChance, int infectRadius,int x, int y) = 0;
+	virtual void end() = 0;
 };
 
 class singleCPUalgo : public algo
@@ -22,4 +23,7 @@ private:
 	std::default_random_engine* random_ = nullptr;
 public:
 	void run(std::vector<human>* humans, int infectChance, int infectRadius, int x, int y) override;
+	void end() override {
+	    ;
+	}
 };

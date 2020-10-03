@@ -35,4 +35,8 @@ sdlRenderer::~sdlRenderer()
 	SDL_Quit();
 }
 
-
+void sdlRenderer::end() {
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+}

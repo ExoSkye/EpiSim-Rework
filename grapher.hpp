@@ -46,11 +46,18 @@ public:
         }
         data.emplace_back(val);
         count++;
-        file << std::to_string(count) + "," + std::to_string(val) + "\n";
+        file << std::to_string(count) << "," << std::to_string(val) << "\n";
+    }
+
+    void closeGraph() {
+        SDL_DestroyRenderer(rend);
+        SDL_DestroyWindow(window);
+        file.flush();
+        file.close();
     }
 
     ~grapher() {
-        file.close();
+        closeGraph();
     }
 private:
     int ilerp (int a, int b, int t, int max_t) {

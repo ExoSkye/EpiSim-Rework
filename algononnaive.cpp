@@ -1,8 +1,12 @@
 #include "algononnaive.h"
 
+void singleAlgo::end() {
+    infectRate->closeGraph();
+    infectedPeople->closeGraph();
+}
+
 singleAlgo::~singleAlgo() {
-    delete infectedPeople;
-    delete infectRate;
+    end();
 }
 
 std::vector<std::vector<human*>> singleAlgo::getArray(std::vector<human>* humans)

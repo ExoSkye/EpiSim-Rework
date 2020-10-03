@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
 	    humans[1].x = 1023;
 	    humans[1].y = 1023;
 	}
-	for (int i = 0; i < 5000; i++){
+	for (int i = 0; i < 1000; i++){
 		{
 			ZoneScopedN("Algorithm")
 			algorithm->run(&humans, 10, 6,1024,1024);
@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
 		}
 		FrameMark;
 	}
-	delete rend;
-	delete algorithm;
+	rend->end();
+	algorithm->end();
 	return 0;
 }
