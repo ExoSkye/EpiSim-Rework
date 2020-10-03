@@ -25,22 +25,32 @@ jobs:
             environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
           }
           - {
+            name: "Windows-MinGW", artifact: "Windows-MinGW.tar.xz",
+            os: windows-latest,
+            build_type: "Release", cc: "gcc", cxx: "g++"
+          }
+          - {
             name: "Ubuntu-GCC", artifact: "LinuxGCC.tar.xz",
             os: ubuntu-latest,
-            build_type: "Release", cc: "/usr/bin/gcc-10", cxx: "/usr/bin/g++-10"
+            build_type: "Release", cc: "gcc", cxx: "g++"
           }
+          - {
+            name: "Ubuntu-Clang", artifact: "Clang.tar.xz",
+            os: ubuntu-latest,
+            build_type: "Release", cc: "clang", cxx: "clang++"
+          }
+          - {
+            name: "macOS-Clang", artifact: "macOS.tar.xz",
+            os: macos-latest,
+            build_type: "Release", cc: "clang", cxx: "clang++"
+          }
+
 
     steps:
     - name: Checkout
       uses: actions/checkout@v2
       with:
         submodules: 'recursive'
-       
-    - name: Install GCC 10 on Ubuntu
-      if: ${{ matrix.cc == '/usr/bin/gcc-10' }}
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y gcc-10 g++-10
        
     - name: Create Build Environment
       # Some projects don't allow in-source building, so create a separate build directory
