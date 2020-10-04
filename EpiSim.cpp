@@ -8,6 +8,7 @@
 int main(int argc, char* argv[])
 {
     int x, y, population, infectChance, infectRadius, length;
+    book render;
     {
         ZoneScopedN("Read Config");
         INIReader reader("./conf.ini");
@@ -21,17 +22,22 @@ int main(int argc, char* argv[])
         infectChance = reader.GetInteger("Simulation","infectChance",10);
         infectRadius = reader.GetInteger("Simulation","infectRadius",6);
         length = reader.GetInteger("Simulation","length",1000);
-    }
+        render = reader.GetBoolean("Window","render",true);
+     }
 	algo* algorithm;
 	renderer* rend;
 	std::vector<human> humans;
 	{
 
 		ZoneScopedN("Init");
+                if (render) {
 		rend = new sdlRenderer();
+                }
 		auto* rand = new std::default_random_engine();
 		algorithm = new singleAlgo();
+                if (render) {
 		rend->init(x, y);
+                }
 		human testSubject{};
 		testSubject.infect_info = infectInfo::susceptible;
 		humans.resize(population, testSubject);
@@ -47,13 +53,15 @@ int main(int argc, char* argv[])
 			ZoneScopedN("Algorithm")
 			algorithm->run(&humans, infectChance, infectRadius,x,y);
 		}
-		{
+		if (render) {
 			ZoneScopedN("Drawing")
 			rend->drawScreen(humans);
 		}
 		FrameMark;
 	}
+        if (render) {
 	rend->end();
+        }
 	algorithm->end();
 	return 0;
 }
