@@ -7,7 +7,7 @@
 #endif
 int main(int argc, char* argv[])
 {
-    int x, y, population, infectChance, infectRadius, length;
+    int x, y, population, infectChance, infectRadius, length,peopleInfected;
     {
         ZoneScopedN("Read Config");
         INIReader reader("./conf.ini");
@@ -15,12 +15,13 @@ int main(int argc, char* argv[])
             printf("Can't load 'conf.ini'\n");
             return 1;
         }
-        x = reader.GetInteger("Window","x",1024);
-        y = reader.GetInteger("Window","y",1024);
-        population = reader.GetInteger("Simulation","population",10240);
-        infectChance = reader.GetInteger("Simulation","infectChance",10);
-        infectRadius = reader.GetInteger("Simulation","infectRadius",6);
-        length = reader.GetInteger("Simulation","length",1000);
+        x = reader.GetInteger("Window", "x", 1024);
+        y = reader.GetInteger("Window", "y", 1024);
+        population = reader.GetInteger("Simulation", "population", 10240);
+        infectChance = reader.GetInteger("Simulation", "infectChance", 10);
+        infectRadius = reader.GetInteger("Simulation", "infectRadius", 6);
+        length = reader.GetInteger("Simulation", "length", 1000);
+        peopleInfected = reader.GetInteger("Simulation", "peopleInfected", 1);
     }
 	algo* algorithm;
 	renderer* rend;
@@ -37,11 +38,20 @@ int main(int argc, char* argv[])
 		humans.resize(population, testSubject);
 		for (human& person : humans)
 		{
-			person.x = (rand->operator()() % 1024);
-			person.y = (rand->operator()() % 1024);
+			person.x = (rand->operator()() % x);
+			person.y = (rand->operator()() % y);
 		}
-		humans[1].infect_info = infectInfo::infectious;
+		for (int i = 0; i < peopleInfected; i ++) {
+		    int index = rand->operator()() % humans.size();
+		    if (humans[index].infect_info != infectInfo::infectious) {
+                humans[index].infect_info = infectInfo::infectious;
+            }
+		    else {
+		        i++;
+		    }
+		}
 	}
+
 	for (int i = 0; i < length; i++) {
 		{
 			ZoneScopedN("Algorithm")
