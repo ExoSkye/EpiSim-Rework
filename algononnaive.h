@@ -3,6 +3,11 @@
 #include "grapher.hpp"
 #include <numeric>
 
+/*
+ * All credit for this idea goes to my amazing physics teacher
+ * Thanks :)
+ * */
+
 class singleAlgo : public algo
 {
 private:
@@ -19,5 +24,5 @@ private:
 public:
 	void run(std::vector<human>* humans, int infectChance, int infectRadius,int x,int y) override;
 	~singleAlgo();
-	void end();
+	void end() override;
 };

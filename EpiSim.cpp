@@ -36,10 +36,7 @@ int main(int argc, char* argv[])
             rend->init(x, y);
         }
 		auto* rand = new std::default_random_engine();
-		algorithm = new singleAlgo();
-                if (render) {
-		rend->init(x, y);
-                }
+		algorithm = new multiAlgo();
 		human testSubject{};
 		testSubject.infect_info = infectInfo::susceptible;
 		humans.resize(population, testSubject);

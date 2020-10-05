@@ -29,8 +29,8 @@ public:
         }
     }
     void update() {
-        if (data[0] > _max_Y) {
-            _max_Y = data[0];
+        if (data[data.size()-1] > _max_Y) {
+            _max_Y = data[data.size()-1];
         }
         SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
         SDL_RenderClear(rend);
