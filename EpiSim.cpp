@@ -8,7 +8,7 @@
 int main(int argc, char* argv[])
 {
     int x, y, population, infectChance, infectRadius, length;
-    book render;
+    bool render;
     {
         ZoneScopedN("Read Config");
         INIReader reader("./conf.ini");
@@ -50,6 +50,7 @@ int main(int argc, char* argv[])
 	}
 	for (int i = 0; i < length; i++) {
 		{
+                        printf("Working out frame %d\n",i);
 			ZoneScopedN("Algorithm")
 			algorithm->run(&humans, infectChance, infectRadius,x,y);
 		}
