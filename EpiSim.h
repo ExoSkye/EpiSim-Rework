@@ -10,7 +10,7 @@
 #include "algononnaive.h"
 #include "grapher.hpp"
 #include "libs/inih/INIReader.h"
-
+#include <cstdio>
 #ifdef TRACY_ENABLE
 void* operator new(std::size_t count) {
     auto ptr = malloc(count);TracyAlloc(ptr, count);

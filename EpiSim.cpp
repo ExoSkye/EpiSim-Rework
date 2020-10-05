@@ -37,6 +37,9 @@ int main(int argc, char* argv[])
         }
 		auto* rand = new std::default_random_engine();
 		algorithm = new singleAlgo();
+                if (render) {
+		rend->init(x, y);
+                }
 		human testSubject{};
 		testSubject.infect_info = infectInfo::susceptible;
 		humans.resize(population, testSubject);
@@ -58,6 +61,7 @@ int main(int argc, char* argv[])
 
 	for (int i = 0; i < length; i++) {
 		{
+            printf("Working out frame %d\n",i);
 			ZoneScopedN("Algorithm")
 			algorithm->run(&humans, infectChance, infectRadius,x,y);
 		}
