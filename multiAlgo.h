@@ -7,7 +7,9 @@
 #include "algorithm.h"
 #include "grapher.hpp"
 #include <thread>
+#include <numeric>
 
+#if !defined(OpenCL_Enable) && !defined(CUDA_Enable)
 class multiAlgo : public algo {
 private:
     int totalInfected;
@@ -27,6 +29,17 @@ public:
     ~multiAlgo();
     void end() override;
 };
+
+#elif defined(OpenCL_Enable)
+
+#include "oclAlgo.h"
+#define multiAlgo oclAlgo
+
+#elif defined(CUDA_Enable)
+
+
+
+#endif
 
 
 #endif //EPISIM_MULTIALGO_H
