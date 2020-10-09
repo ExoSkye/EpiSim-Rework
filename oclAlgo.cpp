@@ -25,15 +25,20 @@ void oclAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius
         temp = (human*)malloc(humans->size()*sizeof(human));
     }
     getArray(humans);
-    queue.enqueueWriteBuffer(GridPeople,CL_TRUE,0,_x*_y*sizeof(HumanIND),backup.data());
-    queue.enqueueWriteBuffer(people,CL_TRUE,0,humans->size()*sizeof(human),humans->data());
+    random.resize(humans->size());
+    std::generate(random.begin(), random.end(), std::rand);
+    queue.enqueueWriteBuffer(GridPeople,CL_FALSE,0,_x*_y*sizeof(HumanIND),backup.data());
+    queue.enqueueWriteBuffer(people,CL_FALSE,0,humans->size()*sizeof(human),humans->data());
+    queue.enqueueWriteBuffer(randomBuf,CL_FALSE,0,humans->size()*sizeof(int),random.data());
+    queue.finish();
     move_infect.setArg(0,GridPeople);
     move_infect.setArg(1,people);
-    move_infect.setArg(2, infectChance);
-    move_infect.setArg(3, infectRadius);
-    move_infect.setArg(4, x);
-    move_infect.setArg(5, y);
-    queue.enqueueNDRangeKernel(move_infect,cl::NullRange,cl::NDRange(_x*_y),cl::NullRange);
+    move_infect.setArg(2,randomBuf);
+    move_infect.setArg(3, infectChance);
+    move_infect.setArg(4, infectRadius);
+    move_infect.setArg(5, x);
+    move_infect.setArg(6, y);
+    int ret = queue.enqueueNDRangeKernel(move_infect,cl::NullRange,cl::NDRange(humans->size()),cl::NullRange);
     queue.finish();
     queue.enqueueReadBuffer(people,CL_TRUE,0,_x*_y,temp);
     for (int i = 0; i < humans->size(); i++) {
@@ -50,6 +55,7 @@ void oclAlgo::end() {
 }
 
 oclAlgo::oclAlgo() {
+    int ret = 0;
     std::vector<cl::Platform> all_platforms;
     cl::Platform::get(&all_platforms);
     if(all_platforms.size()==0){
@@ -68,7 +74,7 @@ oclAlgo::oclAlgo() {
     default_device=all_devices[0];
     std::cout<< "Using device: "<<default_device.getInfo<CL_DEVICE_NAME>()<<"\n";
 
-    context = cl::Context({default_device});
+    context = cl::Context({default_device},NULL,NULL,NULL,&ret);
 
     std::ifstream file("kernel.cl");
 
@@ -84,7 +90,7 @@ oclAlgo::oclAlgo() {
     }
 
     //create queue to which we will push commands for the device.
-    queue = cl::CommandQueue(context,default_device);
+    queue = cl::CommandQueue(context,default_device,0,&ret);
 
     move_infect = cl::Kernel(program, "move_infect");
 }

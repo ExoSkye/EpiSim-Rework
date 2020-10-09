@@ -8,12 +8,15 @@
 #include "algorithm.h"
 #include "grapher.hpp"
 #include <numeric>
-#include <CL/cl2.hpp>
+#define CL_TARGET_OPENCL_VERSION 120
+#include <CL/cl.hpp>
 #include <iostream>
 #include <fstream>
-
+#include <random>
 class oclAlgo : public algo {
 private:
+    std::default_random_engine randomEngine();
+    std::vector<int> random;
     cl::Platform default_platform;
     cl::Device default_device;
     cl::Context context;
@@ -21,6 +24,7 @@ private:
     cl::Program program;
     cl::Buffer GridPeople;
     cl::Buffer people;
+    cl::Buffer randomBuf;
     cl::Kernel move_infect;
     cl::CommandQueue queue;
     int totalInfected;
