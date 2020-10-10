@@ -30,6 +30,11 @@ add_subdirectory("libs/SDL2")
 add_executable (EpiSim "EpiSim.cpp" "EpiSim.h" "render/render.h" "render/sdlRender.cpp" "render/sdlRender.h" "tracy/TracyClient.cpp" "algorithm.h" "algorithm.cpp" "algomulti.h" "algomulti.cpp"  "algononnaive.h" algononnaive.cpp grapher.hpp)
 target_link_libraries(EpiSim PUBLIC SDL2-static PUBLIC SDL2main)
 target_include_directories(EpiSim PUBLIC "libs/SDL2/include/")
+
+IF(tracy MATCHES yes)
+    target_compile_definitions(EpiSim PUBLIC TRACY_ENABLE)
+ENDIF()
+
 IF(CMAKE_BUILD_TYPE MATCHES Debug AND tracy MATCHES yes)
     message("Enabling Tracy support as this is debug mode")
     target_compile_definitions(EpiSim PUBLIC TRACY_ENABLE _DEBUG)

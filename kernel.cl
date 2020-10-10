@@ -44,7 +44,7 @@ uint getRandom(ulong randoms) {
 }
 
 void kernel move_infect(global const HumanIND* grid, global int* personx, global int* persony, global int* personi,
-                        global const ulong* randomVals, int infectChance, int infectRadius,int x, int y) {
+                        global const ulong* randomVals, int infectChance, int infectRadius,int x, int y, ulong i) {
     uint temp_x = personx[get_global_id(0)]+(getRandom(randomVals[get_global_id(0)])%3-1);
     uint temp_y = persony[get_global_id(0)]+(getRandom(randomVals[get_global_id(0)]+temp_x*randomVals[get_global_id(0)])%3-1);
     if (temp_x > x) {
@@ -61,4 +61,13 @@ void kernel move_infect(global const HumanIND* grid, global int* personx, global
     }
     personx[get_global_id(0)] = temp_x;
     persony[get_global_id(0)] = temp_y;
+    if (personi[get_global_id(0)] == 1) {
+        for (int ind = 0; ind < i; ind++) {
+            if (personx[ind] > (personx[get_global_id(0)] - infectRadius) && personx[ind] <(personx[get_global_id(0)] + infectRadius) && persony[ind]> (persony[get_global_id(0)] - infectRadius) && persony[ind] < (persony[get_global_id(0)] + infectRadius)) {
+                if ((getRandom(randomVals[get_global_id(0)]+temp_x*randomVals[get_global_id(0)])%101) < infectChance) {
+                    personi[ind] = 1;
+                }
+            }
+        }
+    }
 }

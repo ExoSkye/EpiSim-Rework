@@ -15,7 +15,7 @@
 #include <random>
 class oclAlgo : public algo {
 private:
-    std::default_random_engine randomEngine();
+    std::default_random_engine randomEngine;
     std::vector<ulong> random;
     cl::Platform default_platform;
     cl::Device default_device;
@@ -42,6 +42,7 @@ private:
     int* tempx;
     int* tempy;
     void getArray(std::vector<human>* humans);
+    void clearArray(std::vector<human>* humans);
     std::vector<int> infectPeople;
     int _x, _y;
     grapher* infectRate = nullptr;
