@@ -16,14 +16,19 @@
 class oclAlgo : public algo {
 private:
     std::default_random_engine randomEngine();
-    std::vector<int> random;
+    std::vector<ulong> random;
     cl::Platform default_platform;
     cl::Device default_device;
     cl::Context context;
     cl::Program::Sources sources;
     cl::Program program;
     cl::Buffer GridPeople;
-    cl::Buffer people;
+    cl::Buffer peoplex;
+    cl::Buffer peopley;
+    cl::Buffer peoplei;
+    std::vector<int> px;
+    std::vector<int> py;
+    std::vector<int> pi;
     cl::Buffer randomBuf;
     cl::Kernel move_infect;
     cl::CommandQueue queue;
@@ -33,7 +38,9 @@ private:
     int move_[7][2] = { {0,0},{0,1},{1,0},{1,1},{0,-1},{-1,0},{-1,-1} };
     std::default_random_engine* random_ = nullptr;
     std::vector<HumanIND> backup;
-    human* temp;
+    int* tempi;
+    int* tempx;
+    int* tempy;
     void getArray(std::vector<human>* humans);
     std::vector<int> infectPeople;
     int _x, _y;

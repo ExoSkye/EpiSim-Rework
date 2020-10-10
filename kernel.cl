@@ -22,8 +22,8 @@ struct human
 {
     int x;
     int y;
-    infectInfo infect_info;
-    bool real;
+    int infect_info;
+    int real;
     //TODO: Add more entries as needed
 };
 
@@ -43,10 +43,10 @@ uint getRandom(ulong randoms) {
     return seed >> 16;
 }
 
-void kernel move_infect(global const HumanIND* grid, global human* humans, global const int* randomVals, int infectChance, int infectRadius,
-                        int x, int y) {
-    uint temp_x = humans[get_global_id(0)].x+(getRandom(randomVals[get_global_id(0)])%3-1);
-    uint temp_y = humans[get_global_id(0)].y+(getRandom(randomVals[get_global_id(0)]+temp_x*randomVals[get_global_id(0)])%3-1);
+void kernel move_infect(global const HumanIND* grid, global int* personx, global int* persony, global int* personi,
+                        global const ulong* randomVals, int infectChance, int infectRadius,int x, int y) {
+    uint temp_x = personx[get_global_id(0)]+(getRandom(randomVals[get_global_id(0)])%3-1);
+    uint temp_y = persony[get_global_id(0)]+(getRandom(randomVals[get_global_id(0)]+temp_x*randomVals[get_global_id(0)])%3-1);
     if (temp_x > x) {
         temp_x = x;
     }
@@ -59,6 +59,6 @@ void kernel move_infect(global const HumanIND* grid, global human* humans, globa
     else if (temp_y < 0) {
         temp_y = 0;
     }
-    humans[get_global_id(0)].x = temp_x;
-    humans[get_global_id(0)].y = temp_y;
+    personx[get_global_id(0)] = temp_x;
+    persony[get_global_id(0)] = temp_y;
 }

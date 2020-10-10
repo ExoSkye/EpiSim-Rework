@@ -9,41 +9,71 @@ void oclAlgo::getArray(std::vector<human> *humans) {
     backup.resize(_x*_y,{human{0,0,infectInfo::susceptible,false},0});
     int i = 0;
     for (human person : *humans) {
-        backup[person.x+person.y*_x] = HumanIND{person, i};
+        backup[(person.y*_x)+person.x] = HumanIND{person, i};
         i++;
     }
 }
 
 
 void oclAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius, int x, int y) {
+    TracyCZone(SetupArray,true);
     _x = x;
     _y = y;
     count++;
+    int i = 0;
+    px.clear();
+    py.clear();
+    pi.clear();
+    for (int i = 0; i < humans->size(); i++) {
+        human person = humans->at(i);
+        px.emplace_back(person.x);
+        py.emplace_back(person.y);
+        pi.emplace_back((int)person.infect_info);
+    }
     if (count == 1) {
         GridPeople = cl::Buffer(context, CL_MEM_READ_ONLY, sizeof(HumanIND)*x*y);
-        people = cl::Buffer(context, CL_MEM_READ_WRITE, sizeof(human)*humans->size());
-        temp = (human*)malloc(humans->size()*sizeof(human));
+        peoplex = cl::Buffer(context, CL_MEM_READ_WRITE, sizeof(int)*humans->size());
+        peopley = cl::Buffer(context, CL_MEM_READ_WRITE, sizeof(int)*humans->size());
+        peoplei = cl::Buffer(context, CL_MEM_READ_WRITE, sizeof(int)*humans->size());
+        randomBuf = cl::Buffer(context, CL_MEM_READ_ONLY, sizeof(ulong)*humans->size());
+        tempi = (int*)malloc(humans->size()*sizeof(int));
+        tempx = (int*)malloc(humans->size()*sizeof(int));
+        tempy = (int*)malloc(humans->size()*sizeof(int));
     }
-    getArray(humans);
+    //getArray(humans);
     random.resize(humans->size());
     std::generate(random.begin(), random.end(), std::rand);
-    queue.enqueueWriteBuffer(GridPeople,CL_FALSE,0,_x*_y*sizeof(HumanIND),backup.data());
-    queue.enqueueWriteBuffer(people,CL_FALSE,0,humans->size()*sizeof(human),humans->data());
-    queue.enqueueWriteBuffer(randomBuf,CL_FALSE,0,humans->size()*sizeof(int),random.data());
+    //queue.enqueueWriteBuffer(GridPeople,CL_FALSE,0,_x*_y*sizeof(HumanIND),backup.data());
+    queue.enqueueWriteBuffer(peoplex,CL_FALSE,0,humans->size()*sizeof(int),px.data());
+    queue.enqueueWriteBuffer(peopley,CL_FALSE,0,humans->size()*sizeof(int),py.data());
+    queue.enqueueWriteBuffer(peoplei,CL_FALSE,0,humans->size()*sizeof(int),pi.data());
+    queue.enqueueWriteBuffer(randomBuf,CL_FALSE,0,humans->size()*sizeof(ulong),random.data());
     queue.finish();
+    TracyCZoneEnd(SetupArray);
+    TracyCZone(KernelRun,true);
     move_infect.setArg(0,GridPeople);
-    move_infect.setArg(1,people);
-    move_infect.setArg(2,randomBuf);
-    move_infect.setArg(3, infectChance);
-    move_infect.setArg(4, infectRadius);
-    move_infect.setArg(5, x);
-    move_infect.setArg(6, y);
+    move_infect.setArg(1,peoplex);
+    move_infect.setArg(2,peopley);
+    move_infect.setArg(3,peoplei);
+    move_infect.setArg(4,randomBuf);
+    move_infect.setArg(5, infectChance);
+    move_infect.setArg(6, infectRadius);
+    move_infect.setArg(7, x);
+    move_infect.setArg(8, y);
     int ret = queue.enqueueNDRangeKernel(move_infect,cl::NullRange,cl::NDRange(humans->size()),cl::NullRange);
     queue.finish();
-    queue.enqueueReadBuffer(people,CL_TRUE,0,_x*_y,temp);
+    TracyCZoneEnd(KernelRun);
+    TracyCZone(ReadDataBack,true);
+    queue.enqueueReadBuffer(peoplex,CL_FALSE,0,humans->size()*sizeof(int),tempx);
+    queue.enqueueReadBuffer(peopley,CL_FALSE,0,humans->size()*sizeof(int),tempy);
+    queue.enqueueReadBuffer(peoplei,CL_FALSE,0,humans->size()*sizeof(int),tempi);
+    queue.finish();
     for (int i = 0; i < humans->size(); i++) {
-        humans->at(i) = temp[i];
+        humans->at(i).x = tempx[i];
+        humans->at(i).y = tempy[i];
+        humans->at(i).infect_info = (infectInfo)tempi[i];
     }
+    TracyCZoneEnd(ReadDataBack);
 }
 
 oclAlgo::~oclAlgo() {

@@ -3,6 +3,7 @@
 #include <random>
 #include "human.h"
 #include "tracy/Tracy.hpp"
+#include "tracy/TracyC.h"
 struct square
 {
 	int x1, x2, y1, y2;
