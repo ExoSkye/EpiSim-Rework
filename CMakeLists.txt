@@ -24,7 +24,7 @@ else()
 endif()
 
 
-cmake_policy(SET CMP0076 NEW)
+#cmake_policy(SET CMP0076 NEW)
 
 add_subdirectory("libs/SDL2")
 add_executable (EpiSim "EpiSim.cpp" "EpiSim.h" "render/render.h" "render/sdlRender.cpp" "render/sdlRender.h" "tracy/TracyClient.cpp" "algorithm.h" "algorithm.cpp" "algomulti.h" "algomulti.cpp"  "algononnaive.h" algononnaive.cpp grapher.hpp)
