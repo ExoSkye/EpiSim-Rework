@@ -8,6 +8,8 @@ struct color
 	int b;
 };
 
+
+
 enum class infectInfo
 {
 	susceptible,
@@ -23,6 +25,13 @@ struct human
 	int x;
 	int y;
 	infectInfo infect_info;
+	bool real = true;
 	//TODO: Add more entries as needed
+};
+
+
+struct HumanIND {
+    human person;
+    int i;
 };
 #endif
