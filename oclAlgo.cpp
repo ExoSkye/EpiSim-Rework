@@ -39,7 +39,7 @@ void oclAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius
         peoplex = cl::Buffer(context, CL_MEM_READ_WRITE, sizeof(int)*humans->size());
         peopley = cl::Buffer(context, CL_MEM_READ_WRITE, sizeof(int)*humans->size());
         peoplei = cl::Buffer(context, CL_MEM_READ_WRITE, sizeof(int)*humans->size());
-        randomBuf = cl::Buffer(context, CL_MEM_READ_ONLY, sizeof(ulong)*humans->size());
+        randomBuf = cl::Buffer(context, CL_MEM_READ_ONLY, sizeof(long)*humans->size()*3);
         tempi = (int*)malloc(humans->size()*sizeof(int));
         tempx = (int*)malloc(humans->size()*sizeof(int));
         tempy = (int*)malloc(humans->size()*sizeof(int));
@@ -55,7 +55,7 @@ void oclAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius
     }
     //getArray(humans);
     TracyCZoneN(GenerateNums,"Generate Random Numbers",true);
-    random.resize(humans->size());
+    random.resize(humans->size()*3);
     std::generate(random.begin(), random.end(), std::rand);
     TracyCZoneEnd(GenerateNums);
     TracyCZoneN(SendArrays,"Send Arrays to the GPU",true)
@@ -63,7 +63,7 @@ void oclAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius
     queue.enqueueWriteBuffer(peoplex,CL_FALSE,0,humans->size()*sizeof(int),px.data());
     queue.enqueueWriteBuffer(peopley,CL_FALSE,0,humans->size()*sizeof(int),py.data());
     queue.enqueueWriteBuffer(peoplei,CL_FALSE,0,humans->size()*sizeof(int),pi.data());
-    queue.enqueueWriteBuffer(randomBuf,CL_FALSE,0,humans->size()*sizeof(ulong),random.data());
+    queue.enqueueWriteBuffer(randomBuf,CL_FALSE,0,humans->size()*sizeof(long)*3,random.data());
     queue.finish();
     TracyCZoneEnd(SendArrays);
     TracyCZoneEnd(SetupArray);
@@ -77,7 +77,7 @@ void oclAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius
     move_infect.setArg(6, infectRadius);
     move_infect.setArg(7, x);
     move_infect.setArg(8, y);
-    move_infect.setArg(9, static_cast<ulong>(humans->size()));
+    move_infect.setArg(9, static_cast<long>(humans->size()));
     int ret = queue.enqueueNDRangeKernel(move_infect,cl::NullRange,cl::NDRange(humans->size()),cl::NullRange);
     queue.finish();
     TracyCZoneEnd(KernelRun);

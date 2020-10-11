@@ -2,7 +2,6 @@
 #include <vector>
 #include <random>
 #include "human.h"
-#undef TRACY_ENABLE
 #include "tracy/Tracy.hpp"
 #include "tracy/TracyC.h"
 struct square

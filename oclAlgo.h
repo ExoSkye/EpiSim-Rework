@@ -16,7 +16,7 @@
 class oclAlgo : public algo {
 private:
     std::default_random_engine randomEngine;
-    std::vector<ulong> random;
+    std::vector<long> random;
     cl::Platform default_platform;
     cl::Device default_device;
     cl::Context context;
