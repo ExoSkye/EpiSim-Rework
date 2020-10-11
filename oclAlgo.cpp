@@ -56,7 +56,7 @@ void oclAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius
     //getArray(humans);
     TracyCZoneN(GenerateNums,"Generate Random Numbers",true);
     random.resize(humans->size()*3);
-    std::generate(random.begin(), random.end(), std::rand);
+    std::generate(random.begin(), random.end(), std::minstd_rand());
     TracyCZoneEnd(GenerateNums);
     TracyCZoneN(SendArrays,"Send Arrays to the GPU",true)
     //queue.enqueueWriteBuffer(GridPeople,CL_FALSE,0,_x*_y*sizeof(HumanIND),backup.data());
