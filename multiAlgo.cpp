@@ -15,14 +15,16 @@ std::vector<std::vector<human *>> multiAlgo::getArray(std::vector<human> *humans
     return ret;
 }
 
-void multiAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius, int x, int y) {
+void
+multiAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius, int x, int y, double immuneChance,
+               int immuneLength) {
     _x = x;
     _y = y;
     peopleInfected = 0;
-    if (infectRate == nullptr) {
+    /*if (infectRate == nullptr) {
         infectRate = new grapher(128,std::string("Infection Rate"),2,128,2,true);
         infectedPeople = new grapher(256,std::string("Total People Infected"),humans->size(),128,1,true);
-    }
+    }*/
     if (infectPeople.size() == 20) {
         infectPeople.erase(infectPeople.cbegin());
     }
@@ -44,23 +46,23 @@ void multiAlgo::run(std::vector<human> *humans, int infectChance, int infectRadi
     unsigned long long humans_left = humans->size();
     for (int i = 0; i < cores-1; i++)
     {
-        threads.emplace_back(std::thread(&multiAlgo::threadedFunc, this, humans,&grid,infectChance,infectRadius,i * per_thread,(i + 1) * per_thread));
+        threads.emplace_back(std::thread(&multiAlgo::threadedFunc, this, humans,&grid,infectChance,infectRadius,i * per_thread,(i + 1) * per_thread,immuneChance));
         humans_left -= per_thread;
     }
     humans_left -= per_thread;
-    threads.emplace_back(std::thread(&multiAlgo::threadedFunc, this, humans,&grid,infectChance,infectRadius,(cores - 1) * per_thread,cores*per_thread + humans_left-1));
+    threads.emplace_back(std::thread(&multiAlgo::threadedFunc, this, humans,&grid,infectChance,infectRadius,(cores - 1) * per_thread,cores*per_thread + humans_left-1,immuneChance));
     for (std::thread& curThread : threads)
     {
         curThread.join();
     }
-    infectedPeople->append(totalInfected);
+    /*infectedPeople->append(totalInfected);
     infectedPeople->update();
     infectPeople.push_back(peopleInfected);
     if (count % 20 == 0) {
         infectRate->append(std::accumulate(infectPeople.begin(), infectPeople.end(),
                                            decltype(infectPeople)::value_type(0)));
     }
-    infectRate->update();
+    infectRate->update();*/
     count++;
 }
 
@@ -69,12 +71,22 @@ multiAlgo::~multiAlgo() {
 }
 
 void multiAlgo::end() {
-    infectedPeople->closeGraph();
-    infectRate->closeGraph();
+    //infectedPeople->closeGraph();
+    //infectRate->closeGraph();
 }
 
+double MgetRandom() {
+    double lower_bound = 0;
+    double upper_bound = 10000;
+    std::uniform_real_distribution<double> unif(lower_bound,upper_bound);
+    std::default_random_engine re;
+    return unif(re);
+}
+
+#include <cmath>
+
 void multiAlgo::threadedFunc(std::vector<human> *humans, std::vector<std::vector<human *>> *grid, int infectChance,
-                             int infectRadius, int start, int end) {
+                             int infectRadius, int start, int end, double immuneChance) {
         {
             ZoneScopedNC("Movement", 0x00ff00);
             for (int i = start; i < end; i++) {
@@ -96,35 +108,43 @@ void multiAlgo::threadedFunc(std::vector<human> *humans, std::vector<std::vector
                 human &person = humans->at(i);
                 if (person.infect_info == infectInfo::infectious) {
                     infectCount++;
-                    std::vector<human *> peopleCloseEnough;
-                    for (int x1 = person.x - infectRadius / 2; x1 < person.x + infectRadius / 2; x1++) {
-                        for (int y1 = person.y - infectRadius / 2; y1 < person.y + infectRadius / 2; y1++) {
-                            int temp_x = x1;
-                            int temp_y = y1;
-                            if (x1 < 0) {
-                                temp_x = 0;
-                            } else if (x1 >= _x) {
-                                temp_x = _x - 1;
-                            }
-                            if (y1 < 0) {
-                                temp_y = 0;
-                            } else if (y1 >= _y) {
-                                temp_y = _y - 1;
-                            }
-                            if (grid->at(temp_x)[temp_y] != nullptr &&
-                                grid->at(temp_x)[temp_y]->infect_info != infectInfo::infectious) {
-                                peopleCloseEnough.push_back(grid->at(temp_x)[temp_y]);
+                    person.timeSinceInfected++;
+                    if (static_cast<double>(random_->operator()() % 100001)/1000 < immuneChance) {
+                        person.infect_info = infectInfo::immune;
+                    }
+                    else {
+                        std::vector<human *> peopleCloseEnough;
+                        for (int x1 = person.x - infectRadius; x1 < person.x + infectRadius; x1++) {
+                            for (int y1 = person.y - infectRadius; y1 < person.y + infectRadius; y1++) {
+                                int temp_x = x1;
+                                int temp_y = y1;
+                                if (x1 < 0) {
+                                    temp_x = 0;
+                                } else if (x1 >= _x) {
+                                    temp_x = _x - 1;
+                                }
+                                if (y1 < 0) {
+                                    temp_y = 0;
+                                } else if (y1 >= _y) {
+                                    temp_y = _y - 1;
+                                }
+                                if (grid->at(temp_x)[temp_y] != nullptr &&
+                                    grid->at(temp_x)[temp_y]->infect_info != infectInfo::infectious &&
+                                    grid->at(temp_x)[temp_y]->infect_info != infectInfo::immune) {
+                                    peopleCloseEnough.push_back(grid->at(temp_x)[temp_y]);
+                                }
                             }
                         }
-                    }
-                    if (infectCount > totalInfected) {
-                        totalInfected = infectCount;
-                    }
-                    for (human *person2 : peopleCloseEnough) {
-                        ZoneScoped;
-                        if ((random_->operator()() % 101) < infectChance) {
-                            person2->infect_info = infectInfo::infectious;
-                            peopleInfected++;
+                        if (infectCount > totalInfected) {
+                            totalInfected = infectCount;
+                        }
+                        for (human *person2 : peopleCloseEnough) {
+                            ZoneScoped;
+                            if ((random_->operator()() % 101) < infectChance) {
+                                person2->infect_info = infectInfo::infectious;
+                                peopleInfected++;
+                                person.peopleInfected++;
+                            }
                         }
                     }
                 }

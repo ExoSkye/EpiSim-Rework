@@ -1,6 +1,9 @@
 #pragma once
 #ifndef human_imp
 #define human_imp
+
+#include <stdexcept>
+
 struct color
 {
 	int r;
@@ -8,7 +11,53 @@ struct color
 	int b;
 };
 
+enum operatorType {
+    add,
+    minus,
+    multiply,
+    divide,
+    power
+};
 
+#include <type_traits>
+
+template<typename T>
+class formula {
+private:
+    operatorType _op;
+    T _scalar;
+public:
+    formula(operatorType op, T scalar) {
+        static_assert(std::is_arithmetic<T>::value, "Not an arithmetic type");
+        _op = op;
+        _scalar = scalar;
+    }
+    T get(T in) {
+        switch (_op) {
+            case add:
+                return in + _scalar;
+                break;
+            case minus:
+                return in - _scalar;
+                break;
+            case divide:
+                return in * _scalar;
+                break;
+            case multiply:
+                return in / _scalar;
+                break;
+            case power:
+                return pow(in, _scalar);
+                break;
+            default:
+                throw std::runtime_error("ERROR: Formula operation wasn't in enum");
+        }
+    }
+    void update(operatorType newOp, T newScalar) {
+        _op=newOp;
+        _scalar=newScalar;
+    }
+};
 
 enum class infectInfo
 {
@@ -26,6 +75,8 @@ struct human
 	int y;
 	infectInfo infect_info;
 	bool real = true;
+	int time = 0;
+	int peopleInfected = 0;
 	//TODO: Add more entries as needed
 };
 

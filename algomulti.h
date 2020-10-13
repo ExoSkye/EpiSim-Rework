@@ -20,5 +20,7 @@ private:
 	std::default_random_engine* random_ = nullptr;
 	void threaded(threadCreation threadCreateInfo);
 public:
-	void run(std::vector<human>* humans, int infectChance, int infectRadius, int x, int y) override;
+	void
+    run(std::vector<human> *humans, int infectChance, int infectRadius, int x, int y, double immuneChance,
+        int immuneLength) override;
 };

@@ -21,7 +21,9 @@ void oclAlgo::clearArray(std::vector<human>* humans) {
     }
 }
 
-void oclAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius, int x, int y) {
+void
+oclAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius, int x, int y, double immuneChance,
+             int immuneLength) {
     TracyCZoneN(SetupArray,"Setup Arrays",true);
     _x = x;
     _y = y;
@@ -39,7 +41,7 @@ void oclAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius
         peoplex = cl::Buffer(context, CL_MEM_READ_WRITE, sizeof(int)*humans->size());
         peopley = cl::Buffer(context, CL_MEM_READ_WRITE, sizeof(int)*humans->size());
         peoplei = cl::Buffer(context, CL_MEM_READ_WRITE, sizeof(int)*humans->size());
-        randomBuf = cl::Buffer(context, CL_MEM_READ_ONLY, sizeof(long)*humans->size()*3);
+        randomBuf = cl::Buffer(context, CL_MEM_READ_ONLY, sizeof(long)*humans->size()*4);
         tempi = (int*)malloc(humans->size()*sizeof(int));
         tempx = (int*)malloc(humans->size()*sizeof(int));
         tempy = (int*)malloc(humans->size()*sizeof(int));
@@ -55,7 +57,7 @@ void oclAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius
     }
     //getArray(humans);
     TracyCZoneN(GenerateNums,"Generate Random Numbers",true);
-    random.resize(humans->size()*3);
+    random.resize(humans->size()*4);
     std::generate(random.begin(), random.end(), std::rand);
     TracyCZoneEnd(GenerateNums);
     TracyCZoneN(SendArrays,"Send Arrays to the GPU",true)
@@ -63,7 +65,7 @@ void oclAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius
     queue.enqueueWriteBuffer(peoplex,CL_FALSE,0,humans->size()*sizeof(int),px.data());
     queue.enqueueWriteBuffer(peopley,CL_FALSE,0,humans->size()*sizeof(int),py.data());
     queue.enqueueWriteBuffer(peoplei,CL_FALSE,0,humans->size()*sizeof(int),pi.data());
-    queue.enqueueWriteBuffer(randomBuf,CL_FALSE,0,humans->size()*sizeof(long)*3,random.data());
+    queue.enqueueWriteBuffer(randomBuf,CL_FALSE,0,humans->size()*sizeof(long)*4,random.data());
     queue.finish();
     TracyCZoneEnd(SendArrays);
     TracyCZoneEnd(SetupArray);
@@ -78,6 +80,7 @@ void oclAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius
     move_infect.setArg(7, x);
     move_infect.setArg(8, y);
     move_infect.setArg(9, static_cast<long>(humans->size()));
+    move_infect.setArg(10,immuneChance);
     int ret = queue.enqueueNDRangeKernel(move_infect,cl::NullRange,cl::NDRange(humans->size()),cl::NullRange);
     queue.finish();
     TracyCZoneEnd(KernelRun);
@@ -90,7 +93,14 @@ void oclAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius
     for (int i = 0; i < humans->size(); i++) {
         humans->at(i).x = tempx[i];
         humans->at(i).y = tempy[i];
-        humans->at(i).infect_info = (infectInfo)tempi[i];
+        if (humans->at(i).time >= immuneLength && humans->at(i).infect_info == infectInfo::immune) {
+            humans->at(i).infect_info = infectInfo::susceptible;
+            humans->at(i).time = 0;
+        }
+        else {
+            humans->at(i).infect_info = (infectInfo) tempi[i];
+        }
+        humans->at(i).time++;
     }
     TracyCZoneEnd(ReadDataBack);
 }

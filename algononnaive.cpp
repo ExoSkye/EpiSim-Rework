@@ -21,13 +21,24 @@ std::vector<std::vector<human*>> singleAlgo::getArray(std::vector<human>* humans
     return ret;
 }
 
-void singleAlgo::run(std::vector<human>* humans, int infectChance, int infectRadius,int x,int y) {
+double SgetRandom() {
+    double lower_bound = 0;
+    double upper_bound = 10000;
+    std::uniform_real_distribution<double> unif(lower_bound,upper_bound);
+    std::default_random_engine re;
+    return unif(re);
+}
+
+#include <cmath>
+
+void singleAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius, int x, int y, double immuneChance,
+                     int immuneLength) {
     _x = x;
     _y = y;
-    if (infectRate == nullptr) {
-        infectRate = new grapher(128,std::string("Infection Rate"),2,128,2,true);
-        infectedPeople = new grapher(256,std::string("Total People Infected"),humans->size(),128,1,true);
-    }
+    //if (infectRate == nullptr) {
+        //infectRate = new grapher(128,std::string("Infection Rate"),2,128,2,true);
+        //infectedPeople = new grapher(256,std::string("Total People Infected"),humans->size(),128,1,true);
+    //}
     int peopleInfected = 0;
     if (infectPeople.size() == 20) {
         infectPeople.erase(infectPeople.cbegin());
@@ -60,11 +71,15 @@ void singleAlgo::run(std::vector<human>* humans, int infectChance, int infectRad
         ZoneScopedNC("Infection",0x0000ff);
         int infectCount = 0;
         for (human &person : *humans) {
+            person.time++;
             if (person.infect_info == infectInfo::infectious) {
                 infectCount++;
+                if (random_->operator()() % 101 < infectChance) {
+                    person.infect_info = infectInfo::immune;
+                }
                 std::vector<human *> peopleCloseEnough;
-                for (int x1 = person.x - infectRadius / 2; x1 < person.x + infectRadius / 2; x1++) {
-                    for (int y1 = person.y - infectRadius / 2; y1 < person.y + infectRadius / 2; y1++) {
+                for (int x1 = person.x - infectRadius; x1 < person.x + infectRadius; x1++) {
+                    for (int y1 = person.y - infectRadius; y1 < person.y + infectRadius; y1++) {
                         int temp_x = x1;
                         int temp_y = y1;
                         if (x1 < 0) {
@@ -78,7 +93,8 @@ void singleAlgo::run(std::vector<human>* humans, int infectChance, int infectRad
                             temp_y = y - 1;
                         }
                         if (ret[temp_x][temp_y] != nullptr &&
-                            ret[temp_x][temp_y]->infect_info != infectInfo::infectious) {
+                            ret[temp_x][temp_y]->infect_info != infectInfo::infectious &&
+                            ret[temp_x][temp_y]->infect_info != infectInfo::immune) {
                             peopleCloseEnough.push_back(ret[temp_x][temp_y]);
                         }
                     }
@@ -91,6 +107,7 @@ void singleAlgo::run(std::vector<human>* humans, int infectChance, int infectRad
                     if ((random_->operator()() % 101) < infectChance) {
                         person2->infect_info = infectInfo::infectious;
                         peopleInfected++;
+                        person.peopleInfected++;
                     }
                 }
             }
@@ -99,13 +116,13 @@ void singleAlgo::run(std::vector<human>* humans, int infectChance, int infectRad
             ret[person.x][person.y] = nullptr;
         }
     }
-    infectedPeople->append(totalInfected);
+    /*infectedPeople->append(totalInfected);
     infectedPeople->update();
     infectPeople.push_back(peopleInfected);
     if (count % 20 == 0) {
         infectRate->append(std::accumulate(infectPeople.begin(), infectPeople.end(),
                                            decltype(infectPeople)::value_type(0)));
     }
-    infectRate->update();
+    infectRate->update();*/
     count++;
 }

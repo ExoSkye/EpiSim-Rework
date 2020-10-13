@@ -22,7 +22,9 @@ private:
     grapher* infectRate = nullptr;
     grapher* infectedPeople = nullptr;
 public:
-	void run(std::vector<human>* humans, int infectChance, int infectRadius,int x,int y) override;
+	void
+    run(std::vector<human> *humans, int infectChance, int infectRadius, int x, int y, double immuneChance,
+        int immuneLength) override;
 	~singleAlgo();
 	void end() override;
 };

@@ -7,7 +7,7 @@
 #endif
 int main(int argc, char* argv[])
 {
-    int x, y, population, infectChance, infectRadius, length,peopleInfected;
+    int x, y, population, infectChance, infectRadius, length,peopleInfected,immuneChance,immuneLength;
     bool render;
     {
         ZoneScopedN("Read Config");
@@ -24,6 +24,9 @@ int main(int argc, char* argv[])
         length = reader.GetInteger("Simulation", "length", 1000);
         peopleInfected = reader.GetInteger("Simulation", "peopleInfected", 1);
         render = reader.GetBoolean("Window","render",true);
+        immuneChance = reader.GetReal("Simulation","immuneChance",0.1);
+        immuneLength = reader.GetInteger("Simulation","immuneLength",0);
+
     }
 	algo* algorithm;
 	renderer* rend;
@@ -60,7 +63,7 @@ int main(int argc, char* argv[])
 		{
             printf("Working out frame %d\n",i);
 			ZoneScopedN("Algorithm")
-			algorithm->run(&humans, infectChance, infectRadius,x,y);
+            algorithm->run(&humans, infectChance, infectRadius, x, y, immuneChance, 1000);
 		}
 		if (render) {
 			ZoneScopedN("Drawing")

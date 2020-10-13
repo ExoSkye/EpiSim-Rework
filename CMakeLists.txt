@@ -17,14 +17,15 @@ set(cuda "no" CACHE STRING "Choose to use CUDA or not")
 set(tracy "yes" CACHE STRING "Choose if tracy is disabled")
 
 if(${CMAKE_VERSION} VERSION_LESS "3.18.4")
-    message("Disabling CUDA support as it is impossible to detect automatically on CMake > 3.18.4")
+    message("Disabling CUDA support as it is impossible to detect automatically on CMake < 3.18.4")
     set(cuda "no")
 else()
     include(FindCUDAToolkit)
 endif()
 
-
-#cmake_policy(SET CMP0076 NEW)
+if (${CMAKE_VERSION} VERSION_GREATER "3.13")
+    cmake_policy(SET CMP0076 NEW)
+endif()
 
 add_subdirectory("libs/SDL2")
 add_executable (EpiSim "EpiSim.cpp" "EpiSim.h" "render/render.h" "render/sdlRender.cpp" "render/sdlRender.h" "tracy/TracyClient.cpp" "algorithm.h" "algorithm.cpp" "algomulti.h" "algomulti.cpp"  "algononnaive.h" algononnaive.cpp grapher.hpp)

@@ -23,9 +23,11 @@ private:
     int _x, _y;
     grapher* infectRate = nullptr;
     grapher* infectedPeople = nullptr;
-    void threadedFunc(std::vector<human>* humans, std::vector<std::vector<human*>>* grid, int infectChance, int infectRadius, int start, int end);
+    void threadedFunc(std::vector<human> *humans, std::vector<std::vector<human *>> *grid, int infectChance,
+                      int infectRadius, int start, int end, double immuneChance);
 public:
-    void run(std::vector<human>* humans, int infectChance, int infectRadius,int x,int y) override;
+    void
+    run(std::vector<human> *humans, int infectChance, int infectRadius, int x, int y, double immuneChance) override;
     ~multiAlgo();
     void end() override;
 };

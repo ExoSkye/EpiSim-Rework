@@ -50,7 +50,9 @@ private:
     grapher* infectedPeople = nullptr;
 public:
     oclAlgo();
-    void run(std::vector<human>* humans, int infectChance, int infectRadius,int x,int y) override;
+    void
+    run(std::vector<human> *humans, int infectChance, int infectRadius, int x, int y, double immuneChance,
+        int immuneLength) override;
     ~oclAlgo();
     void end() override;
 };
