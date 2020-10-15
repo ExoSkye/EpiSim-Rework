@@ -1,1 +1,40 @@
+
 # EpiSim-Rework
+
+## How to build
+
+### Anything other than the Raspberry Pi
+
+1 - Clone the repo with submodules:
+`git clone --recurse-submodules https://github.com/protobyter/EpiSim-Rework.git`
+
+2 - Setup the build environment:
+ ```
+mkdir build 
+cd build
+```
+
+#### With OpenCL
+
+3 - Run CMake with OpenCL on
+```
+cmake .. -Dopencl=yes -Dtracy=no
+```
+
+#### Without OpenCL
+
+3 - Run CMake with OpenCL off
+```
+cmake .. -Dopencl=no -Dtracy=no
+```
+
+### Building
+
+4 - Build:
+```
+make -j<NUMBER OF CORES>
+```
+
+### Raspberry Pi
+
+1 - Do the above but change to the `rpi` branch
