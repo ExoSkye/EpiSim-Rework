@@ -43,8 +43,8 @@ jobs:
             run: |
               echo "The generated token is masked: ${TOKEN}":
  
-            - uses: Label305/AutoRebase@v0.1
-              with:
+          - uses: Label305/AutoRebase@v0.1
+            with:
                   # We can't use the built-in secrets.GITHUB_TOKEN yet because of this limitation:
                   # https://github.community/t5/GitHub-Actions/Triggering-a-new-workflow-from-another-workflow/td-p/31676
                   # In the meantime, use a token granting write access on the repo:
@@ -52,5 +52,5 @@ jobs:
                   #   See https://github.com/marketplace/actions/github-app-token.
                   # - a personal access token
                   #   See https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line.
-                  github_token: ${{ steps.generate_token.outputs.token }}
+                github_token: ${{ steps.generate_token.outputs.token }}
 
