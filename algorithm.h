@@ -14,7 +14,8 @@ class algo
 public:
 	virtual void
     run(std::vector<human> *humans, int infectChance, int infectRadius, int x, int y, double immuneChance,
-        int immuneLength) = 0;
+        int immuneLength,
+        int immuneLengthVar) = 0;
 	virtual void end() = 0;
 };
 
@@ -27,7 +28,8 @@ private:
 public:
 	void
     run(std::vector<human> *humans, int infectChance, int infectRadius, int x, int y, double immuneChance,
-        int immuneLength) override;
+        int immuneLength,
+        int immuneLengthVar) override;
 	void end() override {
 	    ;
 	}

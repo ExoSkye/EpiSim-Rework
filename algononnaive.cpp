@@ -32,7 +32,8 @@ double SgetRandom() {
 #include <cmath>
 
 void singleAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius, int x, int y, double immuneChance,
-                     int immuneLength) {
+                     int immuneLength,
+                     int immuneLengthVar) {
     _x = x;
     _y = y;
     //if (infectRate == nullptr) {

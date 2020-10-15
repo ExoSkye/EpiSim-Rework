@@ -23,7 +23,8 @@ void oclAlgo::clearArray(std::vector<human>* humans) {
 
 void
 oclAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius, int x, int y, double immuneChance,
-             int immuneLength) {
+             int immuneLength,
+             int immuneLengthVar) {
     TracyCZoneN(SetupArray,"Setup Arrays",true);
     _x = x;
     _y = y;
@@ -45,6 +46,7 @@ oclAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius, int
         tempi = (int*)malloc(humans->size()*sizeof(int));
         tempx = (int*)malloc(humans->size()*sizeof(int));
         tempy = (int*)malloc(humans->size()*sizeof(int));
+        random_ = new std::default_random_engine();
     }
     else {
         ZoneScopedN("Changing values")
@@ -93,9 +95,12 @@ oclAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius, int
     for (int i = 0; i < humans->size(); i++) {
         humans->at(i).x = tempx[i];
         humans->at(i).y = tempy[i];
-        if (humans->at(i).time >= immuneLength && humans->at(i).infect_info == infectInfo::immune) {
-            humans->at(i).infect_info = infectInfo::susceptible;
-            humans->at(i).time = 0;
+        if (humans->at(i).infect_info == infectInfo::immune) {
+            if (humans->at(i).time >=
+                immuneLength + ((random_->operator()() % (immuneLengthVar * 2)) - immuneLengthVar)) {
+                humans->at(i).infect_info = infectInfo::susceptible;
+                humans->at(i).time = 0;
+            }
         }
         else {
             humans->at(i).infect_info = (infectInfo) tempi[i];

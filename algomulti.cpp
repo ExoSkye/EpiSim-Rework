@@ -33,7 +33,8 @@ void multiThreadNaive::threaded(threadCreation threadCreateInfo)
 
 void
 multiThreadNaive::run(std::vector<human> *humans, int infectChance, int infectRadius, int x, int y, double immuneChance,
-                      int immuneLength)
+                      int immuneLength,
+                      int immuneLengthVar)
 {
 	if (random_ == nullptr)
 	{

@@ -24,7 +24,8 @@ private:
 public:
 	void
     run(std::vector<human> *humans, int infectChance, int infectRadius, int x, int y, double immuneChance,
-        int immuneLength) override;
+        int immuneLength,
+        int immuneLengthVar) override;
 	~singleAlgo();
 	void end() override;
 };
