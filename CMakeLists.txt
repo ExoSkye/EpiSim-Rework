@@ -29,7 +29,8 @@ endif()
 
 add_subdirectory("libs/SDL2")
 add_executable (EpiSim "EpiSim.cpp" "EpiSim.h" "render/render.h" "render/sdlRender.cpp" "render/sdlRender.h" "tracy/TracyClient.cpp" "algorithm.h" "algorithm.cpp" "algomulti.h" "algomulti.cpp"  "algononnaive.h" algononnaive.cpp grapher.hpp)
-target_link_libraries(EpiSim PUBLIC SDL2-static PUBLIC SDL2main)
+target_link_libraries(EpiSim PUBLIC SDL2 PUBLIC SDL2main PUBLIC pthread PUBLIC dl)
+target_link_directories(EpiSim PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/libs/SDL2)
 target_include_directories(EpiSim PUBLIC "libs/SDL2/include/")
 
 IF(tracy MATCHES yes)
