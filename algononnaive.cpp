@@ -72,6 +72,13 @@ void singleAlgo::run(std::vector<human> *humans, int infectChance, int infectRad
         ZoneScopedNC("Infection",0x0000ff);
         int infectCount = 0;
         for (human &person : *humans) {
+            if (person.infect_info == infectInfo::immune) {
+                if (person.time >=
+                    immuneLength + ((random_->operator()() % (immuneLengthVar * 2)) - immuneLengthVar)) {
+                    person.infect_info = infectInfo::susceptible;
+                    person.time = 0;
+                }
+            }
             person.time++;
             if (person.infect_info == infectInfo::infectious) {
                 infectCount++;

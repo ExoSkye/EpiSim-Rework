@@ -47,11 +47,11 @@ multiAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius, i
     unsigned long long humans_left = humans->size();
     for (int i = 0; i < cores-1; i++)
     {
-        threads.emplace_back(std::thread(&multiAlgo::threadedFunc, this, humans,&grid,infectChance,infectRadius,i * per_thread,(i + 1) * per_thread,immuneChance));
+        threads.emplace_back(std::thread(&multiAlgo::threadedFunc, this, humans,&grid,infectChance,infectRadius,i * per_thread,(i + 1) * per_thread,immuneChance,immuneLength,immuneLengthVar));
         humans_left -= per_thread;
     }
     humans_left -= per_thread;
-    threads.emplace_back(std::thread(&multiAlgo::threadedFunc, this, humans,&grid,infectChance,infectRadius,(cores - 1) * per_thread,cores*per_thread + humans_left-1,immuneChance));
+    threads.emplace_back(std::thread(&multiAlgo::threadedFunc, this, humans,&grid,infectChance,infectRadius,(cores - 1) * per_thread,cores*per_thread + humans_left-1,immuneChance,immuneLength,immuneLengthVar));
     for (std::thread& curThread : threads)
     {
         curThread.join();
@@ -87,7 +87,7 @@ double MgetRandom() {
 #include <cmath>
 
 void multiAlgo::threadedFunc(std::vector<human> *humans, std::vector<std::vector<human *>> *grid, int infectChance,
-                             int infectRadius, int start, int end, double immuneChance) {
+                             int infectRadius, int start, int end, double immuneChance, int immuneLength, int immuneLengthVar) {
         {
             ZoneScopedNC("Movement", 0x00ff00);
             for (int i = start; i < end; i++) {
@@ -107,9 +107,17 @@ void multiAlgo::threadedFunc(std::vector<human> *humans, std::vector<std::vector
             int infectCount = 0;
             for (int i = start; i < end; i++) {
                 human &person = humans->at(i);
+                if (person.infect_info == infectInfo::immune) {
+                    if (person.time >=
+                        immuneLength + ((random_->operator()() % (immuneLengthVar * 2)) - immuneLengthVar)) {
+                        person.infect_info = infectInfo::susceptible;
+                        person.time = 0;
+                    }
+                }
+                person.time++;
                 if (person.infect_info == infectInfo::infectious) {
                     infectCount++;
-                    person.timeSinceInfected++;
+                    person.time++;
                     if (static_cast<double>(random_->operator()() % 100001)/1000 < immuneChance) {
                         person.infect_info = infectInfo::immune;
                     }

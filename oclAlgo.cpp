@@ -92,6 +92,7 @@ oclAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius, int
     queue.enqueueReadBuffer(peoplei,CL_FALSE,0,humans->size()*sizeof(int),tempi);
     queue.finish();
     //clearArray(humans);
+    TracyCZoneN(immuneCalc,"Check if people are still immune",true);
     for (int i = 0; i < humans->size(); i++) {
         humans->at(i).x = tempx[i];
         humans->at(i).y = tempy[i];
@@ -107,6 +108,7 @@ oclAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius, int
         }
         humans->at(i).time++;
     }
+    TracyCZoneEnd(immuneCalc);
     TracyCZoneEnd(ReadDataBack);
 }
 
