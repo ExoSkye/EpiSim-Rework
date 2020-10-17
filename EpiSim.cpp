@@ -35,9 +35,10 @@ int main(int argc, char* argv[])
 	{
 
 		ZoneScopedN("Init");
-		if (render) {
-            rend = new sdlRenderer();
-            rend->init(x, y);
+		rend = new sdlRenderer();
+		rend->init(x, y);
+        if (!render) {
+            rend->pause = true;
         }
 		auto* rand = new std::default_random_engine();
 		algorithm = new multiAlgo();
@@ -66,15 +67,13 @@ int main(int argc, char* argv[])
 			ZoneScopedN("Algorithm")
             algorithm->run(&humans, infectChance, infectRadius, x, y, immuneChance, immuneLength, immuneLengthVar);
 		}
-		if (render) {
+		{
 			ZoneScopedN("Drawing")
 			rend->drawScreen(humans);
 		}
 		FrameMark;
 	}
-	if (render) {
-        rend->end();
-    }
+	rend->end();
 	algorithm->end();
 	return 0;
 }

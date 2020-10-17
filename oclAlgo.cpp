@@ -29,11 +29,9 @@ oclAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius, int
     _x = x;
     _y = y;
     count++;
-    int i = 0;
     if (count == 1) {
         ZoneScopedN("Initial setup")
-        for (int i = 0; i < humans->size(); i++) {
-            human person = humans->at(i);
+        for (human person : *humans) {
             px.emplace_back(person.x);
             py.emplace_back(person.y);
             pi.emplace_back((int)person.infect_info);
@@ -46,7 +44,8 @@ oclAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius, int
         tempi = (int*)malloc(humans->size()*sizeof(int));
         tempx = (int*)malloc(humans->size()*sizeof(int));
         tempy = (int*)malloc(humans->size()*sizeof(int));
-        random_ = new std::default_random_engine();
+        auto randomDevice = std::random_device();
+        random_ = new std::default_random_engine(randomDevice());
     }
     else {
         ZoneScopedN("Changing values")
@@ -113,7 +112,6 @@ oclAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius, int
 }
 
 oclAlgo::~oclAlgo() {
-
 }
 
 void oclAlgo::end() {
@@ -140,7 +138,7 @@ oclAlgo::oclAlgo() {
     default_device=all_devices[0];
     std::cout<< "Using device: "<<default_device.getInfo<CL_DEVICE_NAME>()<<"\n";
 
-    context = cl::Context({default_device},NULL,NULL,NULL,&ret);
+    context = cl::Context({default_device},nullptr,nullptr,nullptr,&ret);
 
     std::ifstream file("kernel.cl");
 

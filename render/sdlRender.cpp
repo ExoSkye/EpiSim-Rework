@@ -69,7 +69,7 @@ bool sdlRenderer::drawScreen(const std::vector<human>& toDraw)
         SDL_RenderDrawPoints(renderer, NotInfectedPoints, notinfected);
         SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
         SDL_RenderDrawPoints(renderer, InfectedPoints, infected);
-        SDL_SetRenderDrawColor(renderer, 127, 127, 127, 255);
+        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
         SDL_RenderDrawPoints(renderer, ImmunePoints, immune);
         SDL_RenderPresent(renderer);
     }

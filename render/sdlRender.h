@@ -12,7 +12,6 @@ private:
     grapher* ImmunePeople;
     grapher* SusceptiblePeople;
 	SDL_Event e;
-	bool pause = false;
 	int count = 0;
     SDL_Point *InfectedPoints;
     SDL_Point *ImmunePoints;
