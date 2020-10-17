@@ -1,6 +1,8 @@
 
 # EpiSim-Rework
 
+![Build CMake](https://github.com/ProtoByter/EpiSim-Rework/workflows/CMake/badge.svg)
+
 ## How to build
 
 ### Anything other than the Raspberry Pi
