@@ -11,3 +11,6 @@
 [submodule "libs/libSocket"]
 	path = libs/libSocket
 	url = https://github.com/dermesser/libsocket.git
+[submodule "libs/zlib"]
+	path = libs/zlib
+	url = https://github.com/madler/zlib

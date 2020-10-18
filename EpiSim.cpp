@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
         immuneLengthVar = reader.GetInteger("Simulation","immuneLengthVar",1);
 
     }
-	algo* algorithm;
+	networkAlgo* algorithm;
 	renderer* rend;
 	std::vector<human> humans;
 	{
@@ -41,7 +41,8 @@ int main(int argc, char* argv[])
             rend->pause = true;
         }
 		auto* rand = new std::default_random_engine();
-		algorithm = new multiAlgo();
+		algorithm = new networkClient();
+		algorithm->initNet("1.1.1.1");
 		human testSubject{};
 		testSubject.infect_info = infectInfo::susceptible;
 		humans.resize(population, testSubject);

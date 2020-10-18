@@ -7,7 +7,7 @@
 #include <chrono>
 #include <thread>
 #include <random>
-#include "multiAlgo.h"
+#include "network/networkClient.h"
 #include "grapher.hpp"
 #include "libs/inih/INIReader.h"
 #include <cstdio>
