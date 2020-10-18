@@ -6,7 +6,11 @@
 #define EPISIM_NETWORKCLIENT_H
 
 #include "networkAlgo.h"
-
+#include <stdlib.h>
+#include <unistd.h>
+#include "serializeHuman.h"
+#include "zlib_tools.h"
+#include <iostream>
 #include "../libs/libSocket/headers/exception.hpp"
 #include "../libs/libSocket/headers/inetclientstream.hpp"
 

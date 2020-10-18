@@ -6,7 +6,6 @@
 #define EPISIM_ZLIB_TOOLS_H
 
 #include "../libs/zlib/zlib.h"
-#include "networkAlgo.h"
 
 #if defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
 #  include <fcntl.h>

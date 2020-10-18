@@ -6,11 +6,6 @@
 #define EPISIM_NETWORKALGO_H
 
 #include "../algorithm.h"
-#include <stdlib.h>
-#include <unistd.h>
-#include "serializeHuman.h"
-#include "zlib_tools.h"
-#include <iostream>
 
 
 class networkAlgo : public algo {
