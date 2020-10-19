@@ -5,8 +5,6 @@
 
 ## How to build
 
-### Anything other than the Raspberry Pi
-
 1 - Clone the repo with submodules:
 `git clone --recurse-submodules https://github.com/protobyter/EpiSim-Rework.git`
 
@@ -36,7 +34,3 @@ cmake .. -Dopencl=no -Dtracy=no
 ```
 make -j<NUMBER OF CORES>
 ```
-
-### Raspberry Pi
-
-1 - Do the above but change to the `rpi` branch
