@@ -8,6 +8,3 @@
 [submodule "libs/inih"]
 	path = libs/inih
 	url = https://github.com/jtilly/inih.git
-[submodule "libs/libSocket"]
-	path = libs/libSocket
-	url = https://github.com/dermesser/libsocket.git
