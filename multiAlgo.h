@@ -8,7 +8,7 @@
 #include "grapher.hpp"
 #include <thread>
 #include <numeric>
-
+#include <functional>
 #if !defined(OpenCL_Enable) && !defined(CUDA_Enable)
 class multiAlgo : public algo {
 private:

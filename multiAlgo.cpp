@@ -47,11 +47,11 @@ multiAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius, i
     unsigned long long humans_left = humans->size();
     for (int i = 0; i < cores-1; i++)
     {
-        threads.emplace_back(std::thread(&multiAlgo::threadedFunc, this, humans,&grid,infectChance,infectRadius,i * per_thread,(i + 1) * per_thread,immuneChance,immuneLength,immuneLengthVar));
+        threads.emplace_back(std::thread(std::mem_fn(&multiAlgo::threadedFunc), this, humans,&grid,infectChance,infectRadius,i * per_thread,(i + 1) * per_thread,immuneChance,immuneLength,immuneLengthVar));
         humans_left -= per_thread;
     }
     humans_left -= per_thread;
-    threads.emplace_back(std::thread(&multiAlgo::threadedFunc, this, humans,&grid,infectChance,infectRadius,(cores - 1) * per_thread,cores*per_thread + humans_left-1,immuneChance,immuneLength,immuneLengthVar));
+    threads.emplace_back(std::thread(std::mem_fn(&multiAlgo::threadedFunc), this, humans,&grid,infectChance,infectRadius,(cores - 1) * per_thread,cores*per_thread + humans_left-1,immuneChance,immuneLength,immuneLengthVar));
     for (std::thread& curThread : threads)
     {
         curThread.join();
