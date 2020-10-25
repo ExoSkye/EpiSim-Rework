@@ -14,7 +14,7 @@ include(FindOpenCL)
 set(platform "EpiSim" CACHE STRING "Platform selection")
 set(opencl "no" CACHE STRING "Choose to use OpenCL or not")
 set(cuda "no" CACHE STRING "Choose to use CUDA or not")
-set(tracy "yes" CACHE STRING "Choose if tracy is disabled")
+set(tracy "no" CACHE STRING "Choose if tracy is disabled")
 
 if(${CMAKE_VERSION} VERSION_LESS "3.18.4")
     message("Disabling CUDA support as it is impossible to detect automatically on CMake < 3.18.4")
