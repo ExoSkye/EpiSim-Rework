@@ -34,6 +34,10 @@ target_link_directories(EpiSim PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/libs/SDL2)
 target_include_directories(EpiSim PUBLIC "libs/SDL2/include/")
 find_file(BCMHostInclude bcm_host.h PATHS /opt/vc/include)
 
+if (WIN32)
+    list(APPEND EXTRA_LIBS vcruntime user32 gdi32 winmm imm32 ole32 oleaut32 version uuid advapi32 shell32)
+endif()
+
 if(NOT BCMHostInclude)
     message("Couldn't find bcm_host, assuming this is not a Raspberry Pi")
 else()
