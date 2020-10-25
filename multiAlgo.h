@@ -18,7 +18,7 @@ private:
     int move_[7][2] = { {0,0},{0,1},{1,0},{1,1},{0,-1},{-1,0},{-1,-1} };
     std::default_random_engine* random_ = nullptr;
     std::vector<std::vector<human*>> backup;
-    std::vector<std::vector<human*>> getArray(std::vector<human>* humans);
+    std::vector<std::vector<human*>>* getArray(std::vector<human>* humans);
     std::vector<int> infectPeople;
     int _x, _y;
     grapher* infectRate = nullptr;

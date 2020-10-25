@@ -4,15 +4,14 @@
 
 #include "multiAlgo.h"
 
-std::vector<std::vector<human *>> multiAlgo::getArray(std::vector<human> *humans) {
+std::vector<std::vector<human *>>* multiAlgo::getArray(std::vector<human> *humans) {
     ZoneScopedNC("Building array",0xff0000);
-    std::vector<std::vector<human*>> ret = backup;
 
     for (int i = 0; i < humans->size(); i++)
     {
-        ret[humans->at(i).x][humans->at(i).y] = &humans->at(i);
+        backup[humans->at(i).x][humans->at(i).y] = &humans->at(i);
     }
-    return ret;
+    return &backup;
 }
 
 void
@@ -39,19 +38,20 @@ multiAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius, i
         random_ = new std::default_random_engine();
     }
 
-    std::vector<std::vector<human*>> grid = getArray(humans);
-
+    std::vector<std::vector<human*>>* grid = getArray(humans);
+    std::vector<human> humanBackup = *humans;
     unsigned int cores = std::thread::hardware_concurrency();
     unsigned long long per_thread = humans->size() / cores;
     std::vector<std::thread> threads;
     unsigned long long humans_left = humans->size();
     for (int i = 0; i < cores-1; i++)
     {
-        threads.emplace_back(std::thread(std::mem_fn(&multiAlgo::threadedFunc), this, humans,&grid,infectChance,infectRadius,i * per_thread,(i + 1) * per_thread,immuneChance,immuneLength,immuneLengthVar));
+        threads.emplace_back(std::thread(std::mem_fn(&multiAlgo::threadedFunc), this, humans,grid,infectChance,infectRadius,i * per_thread,
+	(i + 1) * per_thread,immuneChance,immuneLength,immuneLengthVar));
         humans_left -= per_thread;
     }
     humans_left -= per_thread;
-    threads.emplace_back(std::thread(std::mem_fn(&multiAlgo::threadedFunc), this, humans,&grid,infectChance,infectRadius,(cores - 1) * per_thread,cores*per_thread + humans_left-1,immuneChance,immuneLength,immuneLengthVar));
+    threads.emplace_back(std::thread(std::mem_fn(&multiAlgo::threadedFunc), this, humans,grid,infectChance,infectRadius,(cores - 1) * per_thread,cores*per_thread + humans_left-1,immuneChance,immuneLength,immuneLengthVar));
     for (std::thread& curThread : threads)
     {
         curThread.join();
@@ -64,7 +64,11 @@ multiAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius, i
                                            decltype(infectPeople)::value_type(0)));
     }
     infectRate->update();*/
+    for (int i = 0; i < humanBackup.size(); i++) {
+        backup[humanBackup[i].x][humanBackup[i].y] = nullptr;
+    }
     count++;
+
 }
 
 multiAlgo::~multiAlgo() {
