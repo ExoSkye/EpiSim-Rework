@@ -1,7 +1,6 @@
 [submodule "libs/SDL2"]
 	path = libs/SDL2
 	url = https://github.com/SDL-mirror/SDL
-	branch = release-2.0.12
 [submodule "tracy"]
 	path = tracy
 	url = https://github.com/wolfpld/tracy
