@@ -61,4 +61,8 @@ multiThreadNaive::run(std::vector<human> *humans, int infectChance, int infectRa
 		curThread.join();
 	}
 
-} 
+}
+
+void multiThreadNaive::end() {
+    ;
+}

@@ -11,10 +11,10 @@ set(CMAKE_CXX_STANDARD 20)
 
 include(FindOpenCL)
 
-set(PLATFORM "EpiSim" CACHE STRING "Platform selection")
+set(PLATFORM "EpiSim" CACHE STRING "Platform selection (effects output executable name, used for CI artifacts)")
 set(OPENCL "no" CACHE STRING "Choose to use OpenCL or not")
 set(TRACY "no" CACHE STRING "Choose if tracy is disabled")
-set(OPENMP "no" CACHE STRING "Choose if OpenMP is used")
+set(OPENMP "yes" CACHE STRING "Choose if OpenMP is used")
 set(MPI "no" CACHE STRING "Choose if MPI is used")
 
 if (${CMAKE_VERSION} VERSION_GREATER "3.13")
@@ -80,4 +80,4 @@ IF (OPENCL MATCHES no)
 endif()
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME ${PLATFORM})
 configure_file(conf.ini ${CMAKE_CURRENT_BINARY_DIR}/conf.ini COPYONLY)
-# TODO: Add tests and install targets if needed.
+# TODO: Add tests and install targets if needed

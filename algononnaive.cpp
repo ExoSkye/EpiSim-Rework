@@ -1,8 +1,8 @@
 #include "algononnaive.h"
 
 void singleAlgo::end() {
-    infectRate->closeGraph();
-    infectedPeople->closeGraph();
+    //infectRate->closeGraph();
+    //infectedPeople->closeGraph();
 }
 
 singleAlgo::~singleAlgo() {

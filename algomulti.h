@@ -24,4 +24,5 @@ public:
     run(std::vector<human> *humans, int infectChance, int infectRadius, int x, int y, double immuneChance,
         int immuneLength,
         int immuneLengthVar) override;
+	void end() override;
 };

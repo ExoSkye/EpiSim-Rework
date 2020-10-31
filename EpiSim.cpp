@@ -2,12 +2,15 @@
 //
 
 #include "EpiSim.h"
+#include "algononnaive.h"
+#include "algomulti.h"
+
 #ifdef TRACY_ENABLE
 #pragma message("Tracy is enabled")
 #endif
 int main(int argc, char* argv[])
 {
-    int x, y, population, infectChance, infectRadius, length,peopleInfected,immuneChance,immuneLength,immuneLengthVar;
+    int x, y, population, infectChance, infectRadius, length,peopleInfected,immuneChance,immuneLength,immuneLengthVar,algo_choice;
     bool render;
     {
         ZoneScopedN("Read Config");
@@ -27,7 +30,17 @@ int main(int argc, char* argv[])
         immuneChance = reader.GetReal("Simulation","immuneChance",0.1);
         immuneLength = reader.GetInteger("Simulation","immuneLength",0);
         immuneLengthVar = reader.GetInteger("Simulation","immuneLengthVar",1);
-
+        std::string algo_input = reader.Get("Simulation","algorithm","single");
+        if (algo_input == "naive_single")
+            algo_choice = 0;
+        else if (algo_input == "naive_multi")
+            algo_choice = 1;
+        else if (algo_input == "single")
+            algo_choice = 2;
+        else if (algo_input == "multi")
+            algo_choice = 3;
+        else if (algo_input == "opencl")
+            algo_choice = 4;
     }
 	algo* algorithm;
 	renderer* rend;
@@ -41,7 +54,26 @@ int main(int argc, char* argv[])
             rend->pause = true;
         }
 		auto* rand = new std::default_random_engine();
-		algorithm = new multiAlgo();
+        switch (algo_choice) {
+            case 0:
+                algorithm = new singleCPUalgo();
+                break;
+            case 1:
+                algorithm = new multiThreadNaive();
+                break;
+            case 2:
+                algorithm = new singleAlgo();
+                break;
+            case 3:
+                algorithm = new multiAlgo();
+                break;
+            case 4:
+                algorithm = new multiAlgo();
+                break;
+            default:
+                algorithm = new multiAlgo();
+                break;
+        }
 		human testSubject{};
 		testSubject.infect_info = infectInfo::susceptible;
 		humans.resize(population, testSubject);
