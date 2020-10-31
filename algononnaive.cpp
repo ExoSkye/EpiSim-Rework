@@ -21,25 +21,20 @@ std::vector<std::vector<human*>> singleAlgo::getArray(std::vector<human>* humans
     return ret;
 }
 
-double SgetRandom() {
-    double lower_bound = 0;
-    double upper_bound = 10000;
-    std::uniform_real_distribution<double> unif(lower_bound,upper_bound);
-    std::default_random_engine re;
-    return unif(re);
-}
 
 #include <cmath>
 
 void singleAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius, int x, int y, double immuneChance,
                      int immuneLength,
-                     int immuneLengthVar) {
+                     int immuneLengthVar,
+                     int timestep) {
     _x = x;
     _y = y;
     //if (infectRate == nullptr) {
         //infectRate = new grapher(128,std::string("Infection Rate"),2,128,2,true);
         //infectedPeople = new grapher(256,std::string("Total People Infected"),humans->size(),128,1,true);
     //}
+
     int peopleInfected = 0;
     if (infectPeople.size() == 20) {
         infectPeople.erase(infectPeople.cbegin());
@@ -51,7 +46,7 @@ void singleAlgo::run(std::vector<human> *humans, int infectChance, int infectRad
         }
     }
     if (random_ == nullptr) {
-        random_ = new std::default_random_engine();
+        random_ = new std::mt19937();
     }
     {
         ZoneScopedNC("Movement",0x00ff00);
@@ -60,14 +55,15 @@ void singleAlgo::run(std::vector<human> *humans, int infectChance, int infectRad
         for (int i = 0; i < humans->size(); i++) {
             human& person = humans->at(i);
 #else
-            for(human person : *humans) {
+        for(human& person : *humans) {
 #endif
-            auto *movement = move_[random_->operator()() % 7];
-            if (!(movement[0] + person.x < 0 || movement[0] + person.x >= _y)) {
-                person.x += movement[0];
+            int addx = random_->operator()() % (timestep * 2 + 1) - timestep;
+            int addy = random_->operator()() % (timestep * 2 + 1) - timestep;
+            if (!(addx + person.x < 0 || addx + person.x >= _x)) {
+                    person.x += addx;
             }
-            if (!(movement[1] + person.y < 0 || movement[1] + person.y >= _y)) {
-                person.y += movement[1];
+            if (!(addy + person.y < 0 || addy + person.y >= _y)) {
+                    person.y += addy;
             }
         }
     }
@@ -82,7 +78,7 @@ void singleAlgo::run(std::vector<human> *humans, int infectChance, int infectRad
         for (int i = 0; i < humans->size(); i++) {
             human& person = humans->at(i);
 #else
-        for(human person : *humans) {
+        for(human& person : *humans) {
 #endif
             if (person.infect_info == infectInfo::immune) {
                 if (person.time >=
@@ -133,7 +129,7 @@ void singleAlgo::run(std::vector<human> *humans, int infectChance, int infectRad
                 }
             }
         }
-        for (human person : *humans) {
+        for (human& person : *humans) {
             ret[person.x][person.y] = nullptr;
         }
     }

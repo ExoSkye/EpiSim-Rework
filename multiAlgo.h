@@ -9,7 +9,7 @@
 #include <thread>
 #include <numeric>
 #include <functional>
-#if !defined(OpenCL_Enable) && !defined(CUDA_Enable)
+#if !defined(OpenCL_Enable)
 class multiAlgo : public algo {
 private:
     int totalInfected;
@@ -24,10 +24,10 @@ private:
     grapher* infectRate = nullptr;
     grapher* infectedPeople = nullptr;
     void threadedFunc(std::vector<human> *humans, std::vector<std::vector<human *>> *grid, int infectChance,
-                      int infectRadius, int start, int end, double immuneChance, int immuneLength, int immuneLengthVar);
+                      int infectRadius, int start, int end, double immuneChance, int immuneLength, int immuneLengthVar,int timestep);
 public:
     void
-    run(std::vector<human> *humans, int infectChance, int infectRadius, int x, int y, double immuneChance, int immuneLength, int immuneLengthVar) override;
+    run(std::vector<human> *humans, int infectChance, int infectRadius, int x, int y, double immuneChance, int immuneLength, int immuneLengthVar,int timestep) override;
     ~multiAlgo();
     void end() override;
 };

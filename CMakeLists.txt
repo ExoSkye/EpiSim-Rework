@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 include(FindOpenCL)
 
-set(PLATFORM "EpiSim" CACHE STRING "Platform selection (effects output executable name, used for CI artifacts)")
+set(PLATFORM "EpiSim" CACHE STRING "Platform selection (affects output executable name, used for CI artifacts)")
 set(OPENCL "no" CACHE STRING "Choose to use OpenCL or not")
 set(TRACY "no" CACHE STRING "Choose if tracy is disabled")
 set(OPENMP "yes" CACHE STRING "Choose if OpenMP is used")

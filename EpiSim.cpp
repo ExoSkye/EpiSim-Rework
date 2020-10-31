@@ -9,7 +9,7 @@
 #endif
 int main(int argc, char* argv[])
 {
-    int x, y, population, infectChance, infectRadius, length,peopleInfected,immuneChance,immuneLength,immuneLengthVar,algo_choice;
+    int x, y, timestep, population, infectChance, infectRadius, length,peopleInfected,immuneChance,immuneLength,immuneLengthVar,algo_choice;
     bool render;
     {
         ZoneScopedN("Read Config");
@@ -30,6 +30,7 @@ int main(int argc, char* argv[])
         immuneLength = reader.GetInteger("Simulation","immuneLength",0);
         immuneLengthVar = reader.GetInteger("Simulation","immuneLengthVar",1);
         std::string algo_input = reader.Get("Simulation","algorithm","single");
+        timestep = reader.GetInteger("Simulation","timestep",1);
         if (algo_input == "single")
             algo_choice = 0;
         else if (algo_input == "multi")
@@ -86,7 +87,7 @@ int main(int argc, char* argv[])
 		{
             printf("Working out frame %d\n",i);
 			ZoneScopedN("Algorithm")
-            algorithm->run(&humans, infectChance, infectRadius, x, y, immuneChance, immuneLength, immuneLengthVar);
+            algorithm->run(&humans, infectChance, infectRadius, x, y, immuneChance, immuneLength, immuneLengthVar, timestep);
 		}
 		{
 			ZoneScopedN("Drawing")

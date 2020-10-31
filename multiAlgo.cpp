@@ -17,7 +17,8 @@ std::vector<std::vector<human *>>* multiAlgo::getArray(std::vector<human> *human
 void
 multiAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius, int x, int y, double immuneChance,
                int immuneLength,
-               int immuneLengthVar) {
+               int immuneLengthVar,
+               int timestep) {
     _x = x;
     _y = y;
     peopleInfected = 0;
@@ -47,11 +48,11 @@ multiAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius, i
     for (int i = 0; i < cores-1; i++)
     {
         threads.emplace_back(std::thread(std::mem_fn(&multiAlgo::threadedFunc), this, humans,grid,infectChance,infectRadius,i * per_thread,
-	(i + 1) * per_thread,immuneChance,immuneLength,immuneLengthVar));
+	(i + 1) * per_thread,immuneChance,immuneLength,immuneLengthVar,timestep));
         humans_left -= per_thread;
     }
     humans_left -= per_thread;
-    threads.emplace_back(std::thread(std::mem_fn(&multiAlgo::threadedFunc), this, humans,grid,infectChance,infectRadius,(cores - 1) * per_thread,cores*per_thread + humans_left-1,immuneChance,immuneLength,immuneLengthVar));
+    threads.emplace_back(std::thread(std::mem_fn(&multiAlgo::threadedFunc), this, humans,grid,infectChance,infectRadius,(cores - 1) * per_thread,cores*per_thread + humans_left-1,immuneChance,immuneLength,immuneLengthVar,timestep));
     for (std::thread& curThread : threads)
     {
         curThread.join();
@@ -80,18 +81,11 @@ void multiAlgo::end() {
     //infectRate->closeGraph();
 }
 
-double MgetRandom() {
-    double lower_bound = 0;
-    double upper_bound = 10000;
-    std::uniform_real_distribution<double> unif(lower_bound,upper_bound);
-    std::default_random_engine re;
-    return unif(re);
-}
-
 #include <cmath>
 
 void multiAlgo::threadedFunc(std::vector<human> *humans, std::vector<std::vector<human *>> *grid, int infectChance,
-                             int infectRadius, int start, int end, double immuneChance, int immuneLength, int immuneLengthVar) {
+                             int infectRadius, int start, int end, double immuneChance, int immuneLength, int immuneLengthVar,
+                             int timestep) {
         {
             ZoneScopedNC("Movement", 0x00ff00);
 #ifdef OMPEnable
@@ -101,12 +95,13 @@ void multiAlgo::threadedFunc(std::vector<human> *humans, std::vector<std::vector
         for (int i = start; i < end; i++) {
 #endif
                 human &person = humans->at(i);
-                auto *movement = move_[random_->operator()() % 7];
-                if (!(movement[0] + person.x < 0 || movement[0] + person.x >= _y)) {
-                    person.x += movement[0];
+                int addx = random_->operator()() % (timestep * 2 + 1) - timestep;
+                int addy = random_->operator()() % (timestep * 2 + 1) - timestep;
+                if (!(addx + person.x < 0 || addx + person.x >= _x)) {
+                    person.x += addx;
                 }
-                if (!(movement[1] + person.y < 0 || movement[1] + person.y >= _y)) {
-                    person.y += movement[1];
+                if (!(addy + person.y < 0 || addy + person.y >= _y)) {
+                    person.y += addy;
                 }
             }
         }
@@ -158,6 +153,7 @@ void multiAlgo::threadedFunc(std::vector<human> *humans, std::vector<std::vector
                                 } else if (y1 >= _y) {
                                     temp_y = _y - 1;
                                 }
+
                                 if (grid->at(temp_x)[temp_y] != nullptr &&
                                     grid->at(temp_x)[temp_y]->infect_info != infectInfo::infectious &&
                                     grid->at(temp_x)[temp_y]->infect_info != infectInfo::immune) {
