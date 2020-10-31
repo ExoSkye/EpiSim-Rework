@@ -55,7 +55,13 @@ void singleAlgo::run(std::vector<human> *humans, int infectChance, int infectRad
     }
     {
         ZoneScopedNC("Movement",0x00ff00);
-        for (human &person : *humans) {
+#ifdef OMPEnable
+#pragma omp parallel for
+        for (int i = 0; i < humans->size(); i++) {
+            human& person = humans->at(i);
+#else
+            for(human person : *humans) {
+#endif
             auto *movement = move_[random_->operator()() % 7];
             if (!(movement[0] + person.x < 0 || movement[0] + person.x >= _y)) {
                 person.x += movement[0];
@@ -71,7 +77,13 @@ void singleAlgo::run(std::vector<human> *humans, int infectChance, int infectRad
     {
         ZoneScopedNC("Infection",0x0000ff);
         int infectCount = 0;
-        for (human &person : *humans) {
+#ifdef OMPEnable
+#pragma omp parallel for
+        for (int i = 0; i < humans->size(); i++) {
+            human& person = humans->at(i);
+#else
+        for(human person : *humans) {
+#endif
             if (person.infect_info == infectInfo::immune) {
                 if (person.time >=
                     immuneLength + ((random_->operator()() % (immuneLengthVar * 2)) - immuneLengthVar)) {

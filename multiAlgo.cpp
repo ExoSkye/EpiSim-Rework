@@ -6,7 +6,7 @@
 
 std::vector<std::vector<human *>>* multiAlgo::getArray(std::vector<human> *humans) {
     ZoneScopedNC("Building array",0xff0000);
-
+#pragma omp parallel for
     for (int i = 0; i < humans->size(); i++)
     {
         backup[humans->at(i).x][humans->at(i).y] = &humans->at(i);
@@ -94,7 +94,12 @@ void multiAlgo::threadedFunc(std::vector<human> *humans, std::vector<std::vector
                              int infectRadius, int start, int end, double immuneChance, int immuneLength, int immuneLengthVar) {
         {
             ZoneScopedNC("Movement", 0x00ff00);
+#ifdef OMPEnable
+#pragma omp simd
             for (int i = start; i < end; i++) {
+#else
+        for (int i = start; i < end; i++) {
+#endif
                 human &person = humans->at(i);
                 auto *movement = move_[random_->operator()() % 7];
                 if (!(movement[0] + person.x < 0 || movement[0] + person.x >= _y)) {
@@ -109,7 +114,12 @@ void multiAlgo::threadedFunc(std::vector<human> *humans, std::vector<std::vector
         {
             ZoneScopedNC("Infection", 0x0000ff);
             int infectCount = 0;
+#ifdef OMPEnable
+#pragma omp simd
             for (int i = start; i < end; i++) {
+#else
+        for (int i = start; i < end; i++) {
+#endif
                 human &person = humans->at(i);
                 if (person.infect_info == infectInfo::immune) {
                     if (person.time >=
@@ -127,8 +137,15 @@ void multiAlgo::threadedFunc(std::vector<human> *humans, std::vector<std::vector
                     }
                     else {
                         std::vector<human *> peopleCloseEnough;
+#ifdef OMPEnable
+#pragma omp simd
+                        for (int x1 = person.x - infectRadius; x1 < person.x + infectRadius; x1++) {
+#pragma omp simd
+                            for (int y1 = person.y - infectRadius; y1 < person.y + infectRadius; y1++) {
+#else
                         for (int x1 = person.x - infectRadius; x1 < person.x + infectRadius; x1++) {
                             for (int y1 = person.y - infectRadius; y1 < person.y + infectRadius; y1++) {
+#endif
                                 int temp_x = x1;
                                 int temp_y = y1;
                                 if (x1 < 0) {

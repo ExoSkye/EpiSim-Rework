@@ -2,6 +2,9 @@
 #include "algorithm.h"
 #include "grapher.hpp"
 #include <numeric>
+#ifdef OMPEnable
+#include <omp.h>
+#endif
 
 /*
  * All credit for this idea goes to my amazing physics teacher
