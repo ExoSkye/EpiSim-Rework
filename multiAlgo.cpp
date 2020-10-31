@@ -131,11 +131,11 @@ void multiAlgo::threadedFunc(std::vector<human> *humans, std::vector<std::vector
                 person.time++;
                 if (person.infect_info == infectInfo::infectious) {
                     infectCount++;
-                    person.time++;
                     if (static_cast<double>(random_->operator()() % 100001)/1000 < immuneChance) {
                         person.infect_info = infectInfo::immune;
+                        person.peopleInfected = 0;
                     }
-                    else {
+                    person.time++;
                         std::vector<human *> peopleCloseEnough;
 #ifdef OMPEnable
 #pragma omp simd
@@ -176,7 +176,6 @@ void multiAlgo::threadedFunc(std::vector<human> *humans, std::vector<std::vector
                                 person.peopleInfected++;
                             }
                         }
-                    }
                 }
             }
         }

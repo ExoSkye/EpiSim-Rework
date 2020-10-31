@@ -94,8 +94,9 @@ void singleAlgo::run(std::vector<human> *humans, int infectChance, int infectRad
             person.time++;
             if (person.infect_info == infectInfo::infectious) {
                 infectCount++;
-                if (random_->operator()() % 101 < infectChance) {
+                if (static_cast<double>(random_->operator()() % 100001)/1000 < immuneChance) {
                     person.infect_info = infectInfo::immune;
+                    person.peopleInfected=0;
                 }
                 std::vector<human *> peopleCloseEnough;
                 for (int x1 = person.x - infectRadius; x1 < person.x + infectRadius; x1++) {

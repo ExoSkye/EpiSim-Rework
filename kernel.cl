@@ -22,8 +22,10 @@ struct human
 {
     int x;
     int y;
-    int infect_info;
-    int real;
+    infectInfo infect_info;
+    bool real = true;
+    int time = 0;
+    int peopleInfected = 0;
     //TODO: Add more entries as needed
 };
 

@@ -3,7 +3,6 @@
 
 #include "EpiSim.h"
 #include "algononnaive.h"
-#include "algomulti.h"
 
 #ifdef TRACY_ENABLE
 #pragma message("Tracy is enabled")
@@ -31,16 +30,12 @@ int main(int argc, char* argv[])
         immuneLength = reader.GetInteger("Simulation","immuneLength",0);
         immuneLengthVar = reader.GetInteger("Simulation","immuneLengthVar",1);
         std::string algo_input = reader.Get("Simulation","algorithm","single");
-        if (algo_input == "naive_single")
+        if (algo_input == "single")
             algo_choice = 0;
-        else if (algo_input == "naive_multi")
-            algo_choice = 1;
-        else if (algo_input == "single")
-            algo_choice = 2;
         else if (algo_input == "multi")
-            algo_choice = 3;
+            algo_choice = 1;
         else if (algo_input == "opencl")
-            algo_choice = 4;
+            algo_choice = 2;
     }
 	algo* algorithm;
 	renderer* rend;
@@ -56,18 +51,12 @@ int main(int argc, char* argv[])
 		auto* rand = new std::default_random_engine();
         switch (algo_choice) {
             case 0:
-                algorithm = new singleCPUalgo();
-                break;
-            case 1:
-                algorithm = new multiThreadNaive();
-                break;
-            case 2:
                 algorithm = new singleAlgo();
                 break;
-            case 3:
+            case 1:
                 algorithm = new multiAlgo();
                 break;
-            case 4:
+            case 2:
                 algorithm = new multiAlgo();
                 break;
             default:
