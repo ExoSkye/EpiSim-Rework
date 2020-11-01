@@ -22,7 +22,7 @@ if (${CMAKE_VERSION} VERSION_GREATER "3.13")
 endif()
 
 add_subdirectory("libs/SDL2")
-add_executable (EpiSim "EpiSim.cpp" "EpiSim.h" "render/render.h" "render/sdlRender.cpp" "render/sdlRender.h" "tracy/TracyClient.cpp" "algorithm.h" "algononnaive.h" algononnaive.cpp grapher.hpp)
+add_executable (EpiSim "EpiSim.cpp" "EpiSim.h" "render/render.h" multiAlgo.cpp multiAlgo.h "render/sdlRender.cpp" "render/sdlRender.h" "tracy/TracyClient.cpp" "algorithm.h" "algononnaive.h" algononnaive.cpp grapher.hpp)
 target_link_libraries(EpiSim PUBLIC SDL2 PUBLIC SDL2main PUBLIC pthread PUBLIC dl)
 target_link_directories(EpiSim PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/libs/SDL2)
 target_include_directories(EpiSim PUBLIC "libs/SDL2/include/")
