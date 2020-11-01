@@ -18,14 +18,14 @@ cd build
 
 3 - Run CMake with OpenCL on
 ```
-cmake .. -Dopencl=yes -Dtracy=no
+cmake .. -Dopencl=yes
 ```
 
 #### Without OpenCL
 
 3 - Run CMake with OpenCL off
 ```
-cmake .. -Dopencl=no -Dtracy=no
+cmake ..
 ```
 
 ### Building
