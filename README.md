@@ -18,7 +18,7 @@ cd build
 
 3 - Run CMake with OpenCL on
 ```
-cmake .. -Dopencl=yes
+cmake .. -DOPENCL=yes
 ```
 
 #### Without OpenCL
