@@ -10,9 +10,10 @@
 #include <vector>
 #include <cmath>
 #include "fstream"
-class grapher {
+template<typename T, int multiplier, typename std::enable_if<std::is_arithmetic<T>::value>::type* = nullptr>
+class grapher_template {
 public:
-    grapher(int size, std::string name, int max_y, int y,int x_step,bool write_to_file) {
+    grapher_template(int size, std::string name, int max_y, int y,int x_step,bool write_to_file) {
         _size = size;
         _name = name;
         _max_Y = max_y;
@@ -29,18 +30,18 @@ public:
         }
     }
     void update() {
-        if (data[data.size()-1] > _max_Y) {
-            _max_Y = data[data.size()-1];
+        if (data[data.size()-1]*multiplier > _max_Y) {
+            _max_Y = data[data.size()-1]*multiplier;
         }
         SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
         SDL_RenderClear(rend);
         SDL_SetRenderDrawColor(rend,255,255,255,255);
         for (int i = 1; i < data.size(); i++) {
-            SDL_RenderDrawLine(rend,(i-1)*_x_step,ilerp(0.0f,_y,_max_Y-data[_size-i+1],_max_Y),i*_x_step,ilerp(0.0f,_y,_max_Y-data[_size-i],_max_Y));
+            SDL_RenderDrawLine(rend,(i-1)*_x_step,ilerp(0.0f,_y,_max_Y-(data[_size-i+1]*multiplier),_max_Y),i*_x_step,ilerp(0.0f,_y,_max_Y-(data[_size-i]*multiplier),_max_Y));
         }
         SDL_RenderPresent(rend);
     }
-    void append(int val) {
+    void append(T val) {
         if (data.size() == _size) {
             data.erase(data.cbegin());
         }
@@ -56,7 +57,7 @@ public:
         file.close();
     }
 
-    ~grapher() {
+    ~grapher_template() {
         closeGraph();
     }
 private:
@@ -75,8 +76,9 @@ private:
     std::ofstream file;
     SDL_Renderer* rend;
     SDL_Window* window;
-    std::vector<int> data;
+    std::vector<T> data;
 };
 
+typedef grapher_template<int,1> grapher;
 
 #endif //EPISIM_GRAPHER_HPP

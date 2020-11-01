@@ -125,6 +125,7 @@ void singleAlgo::run(std::vector<human> *humans, int infectChance, int infectRad
                         person2->infect_info = infectInfo::infectious;
                         peopleInfected++;
                         person.peopleInfected++;
+                        person2->peopleInfected = 0;
                     }
                 }
             }

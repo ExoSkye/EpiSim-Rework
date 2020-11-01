@@ -14,6 +14,7 @@ bool sdlRenderer::init(int x, int y)
     InfectedPeople = new grapher(1024,"Infected People",16,256,1,true);
     ImmunePeople = new grapher(1024,"Immune People",16,256,1,true);
     SusceptiblePeople = new grapher(1024,"Susceptible People",16,256,1,true);
+    RRateGraph = new grapher_template<double,100>(1024,"Average RRate",16,256,1,true);
     return (window == nullptr || renderer == nullptr);
 }
 
@@ -42,6 +43,7 @@ bool sdlRenderer::drawScreen(const std::vector<human>& toDraw)
     int infected = 0;
     int notinfected = 0;
     int immune = 0;
+    double total_infected = 0.0;
     count++;
     if (count == 1) {
         InfectedPoints = (SDL_Point *) alloca(toDraw.size() * sizeof(SDL_Point));
@@ -58,6 +60,7 @@ bool sdlRenderer::drawScreen(const std::vector<human>& toDraw)
         } else if (curHuman.infect_info == infectInfo::immune) {
             ImmunePoints[immune] = {curHuman.x, curHuman.y};
             immune++;
+            total_infected += curHuman.peopleInfected;
         }
     }
     if (!pause) {
@@ -76,9 +79,12 @@ bool sdlRenderer::drawScreen(const std::vector<human>& toDraw)
     InfectedPeople->append(infected);
     ImmunePeople->append(immune);
     SusceptiblePeople->append(notinfected);
+    RRateGraph->append(total_infected/immune);
+
     InfectedPeople->update();
     ImmunePeople->update();
     SusceptiblePeople->update();
+    RRateGraph->update();
 	return true;
 }
 

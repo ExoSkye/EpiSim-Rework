@@ -128,7 +128,6 @@ void multiAlgo::threadedFunc(std::vector<human> *humans, std::vector<std::vector
                     infectCount++;
                     if (static_cast<double>(random_->operator()() % 100001)/1000 < immuneChance) {
                         person.infect_info = infectInfo::immune;
-                        person.peopleInfected = 0;
                     }
                     person.time++;
                         std::vector<human *> peopleCloseEnough;
@@ -170,6 +169,7 @@ void multiAlgo::threadedFunc(std::vector<human> *humans, std::vector<std::vector
                                 person2->infect_info = infectInfo::infectious;
                                 peopleInfected++;
                                 person.peopleInfected++;
+                                person2->peopleInfected = 0;
                             }
                         }
                 }

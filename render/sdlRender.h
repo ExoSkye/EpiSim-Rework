@@ -11,6 +11,7 @@ private:
 	grapher* InfectedPeople;
     grapher* ImmunePeople;
     grapher* SusceptiblePeople;
+    grapher_template<double,100>* RRateGraph;
 	SDL_Event e;
 	int count = 0;
     SDL_Point *InfectedPoints;
