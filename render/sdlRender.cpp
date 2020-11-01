@@ -97,6 +97,7 @@ void sdlRenderer::end() {
     InfectedPeople->closeGraph();
     SusceptiblePeople->closeGraph();
     ImmunePeople->closeGraph();
+    RRateGraph->closeGraph();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();

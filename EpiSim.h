@@ -8,6 +8,9 @@
 #include <thread>
 #include <random>
 #include "multiAlgo.h"
+#ifdef OpenCL_Enable
+#inlcude "oclAlgo.h"
+#endif
 #include "grapher.hpp"
 #include "libs/inih/INIReader.h"
 #include <cstdio>

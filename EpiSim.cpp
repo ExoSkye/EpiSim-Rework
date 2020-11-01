@@ -58,7 +58,12 @@ int main(int argc, char* argv[])
                 algorithm = new multiAlgo();
                 break;
             case 2:
+#ifdef OpenCL_Enable
+                algorithm = new oclAlgo();
+#else
+                printf("OpenCL isn't enabled but is chosen in the config, using the multi-threaded algorithm instead");
                 algorithm = new multiAlgo();
+#endif
                 break;
             default:
                 algorithm = new multiAlgo();
