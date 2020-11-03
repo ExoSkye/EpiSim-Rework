@@ -7,3 +7,6 @@
 [submodule "libs/inih"]
 	path = libs/inih
 	url = https://github.com/jtilly/inih.git
+[submodule "libs/RandomCL"]
+	path = libs/RandomCL
+	url = https://github.com/bstatcomp/RandomCL.git

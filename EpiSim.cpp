@@ -44,10 +44,9 @@ int main(int argc, char* argv[])
 	{
 
 		ZoneScopedN("Init");
-		rend = new sdlRenderer();
-		rend->init(x, y);
-        if (!render) {
-            rend->pause = true;
+		if (render) {
+            rend = new sdlRenderer();
+            rend->init(x, y);
         }
 		auto* rand = new std::default_random_engine();
         switch (algo_choice) {
@@ -94,13 +93,15 @@ int main(int argc, char* argv[])
 			ZoneScopedN("Algorithm")
             algorithm->run(&humans, infectChance, infectRadius, x, y, immuneChance, immuneLength, immuneLengthVar, timestep);
 		}
-		{
+		if (render) {
 			ZoneScopedN("Drawing")
 			rend->drawScreen(humans);
 		}
 		FrameMark;
 	}
-	rend->end();
+	if (render) {
+        rend->end();
+    }
 	algorithm->end();
 	return 0;
 }

@@ -24,7 +24,8 @@ void oclAlgo::clearArray(std::vector<human>* humans) {
 void
 oclAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius, int x, int y, double immuneChance,
              int immuneLength,
-             int immuneLengthVar) {
+             int immuneLengthVar,
+             int timestep) {
     TracyCZoneN(SetupArray,"Setup Arrays",true);
     _x = x;
     _y = y;
@@ -40,7 +41,6 @@ oclAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius, int
         peoplex = cl::Buffer(context, CL_MEM_READ_WRITE, sizeof(int)*humans->size());
         peopley = cl::Buffer(context, CL_MEM_READ_WRITE, sizeof(int)*humans->size());
         peoplei = cl::Buffer(context, CL_MEM_READ_WRITE, sizeof(int)*humans->size());
-        randomBuf = cl::Buffer(context, CL_MEM_READ_ONLY, sizeof(long)*humans->size()*4);
         tempi = (int*)malloc(humans->size()*sizeof(int));
         tempx = (int*)malloc(humans->size()*sizeof(int));
         tempy = (int*)malloc(humans->size()*sizeof(int));
@@ -49,39 +49,40 @@ oclAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius, int
     }
     else {
         ZoneScopedN("Changing values")
+#pragma omp parallel for
         for (int i = 0; i < humans->size(); i++) {
             human person = humans->at(i);
-            px[i] = person.x;
-            py[i] = person.y;
-            pi[i] = (int)person.infect_info;
+            {
+                px[i] = person.x;
+                py[i] = person.y;
+                pi[i] = (int) person.infect_info;
+            }
         }
     }
     //getArray(humans);
     TracyCZoneN(GenerateNums,"Generate Random Numbers",true);
-    random.resize(humans->size()*4);
-    std::generate(random.begin(), random.end(), std::rand);
+    random = random_->operator()();
     TracyCZoneEnd(GenerateNums);
     TracyCZoneN(SendArrays,"Send Arrays to the GPU",true)
     //queue.enqueueWriteBuffer(GridPeople,CL_FALSE,0,_x*_y*sizeof(HumanIND),backup.data());
     queue.enqueueWriteBuffer(peoplex,CL_FALSE,0,humans->size()*sizeof(int),px.data());
     queue.enqueueWriteBuffer(peopley,CL_FALSE,0,humans->size()*sizeof(int),py.data());
     queue.enqueueWriteBuffer(peoplei,CL_FALSE,0,humans->size()*sizeof(int),pi.data());
-    queue.enqueueWriteBuffer(randomBuf,CL_FALSE,0,humans->size()*sizeof(long)*4,random.data());
     queue.finish();
     TracyCZoneEnd(SendArrays);
     TracyCZoneEnd(SetupArray);
     TracyCZoneN(KernelRun,"Run Kernel",true);
-    move_infect.setArg(0,GridPeople);
-    move_infect.setArg(1,peoplex);
-    move_infect.setArg(2,peopley);
-    move_infect.setArg(3,peoplei);
-    move_infect.setArg(4,randomBuf);
-    move_infect.setArg(5, infectChance);
-    move_infect.setArg(6, infectRadius);
-    move_infect.setArg(7, x);
-    move_infect.setArg(8, y);
-    move_infect.setArg(9, static_cast<long>(humans->size()));
-    move_infect.setArg(10,immuneChance);
+    move_infect.setArg(0,peoplex);
+    move_infect.setArg(1,peopley);
+    move_infect.setArg(2,peoplei);
+    move_infect.setArg(3,random);
+    move_infect.setArg(4, infectChance);
+    move_infect.setArg(5, infectRadius);
+    move_infect.setArg(6, x);
+    move_infect.setArg(7, y);
+    move_infect.setArg(8, static_cast<long>(humans->size()));
+    move_infect.setArg(9,immuneChance);
+    move_infect.setArg(10,timestep);
     int ret = queue.enqueueNDRangeKernel(move_infect,cl::NullRange,cl::NDRange(humans->size()),cl::NullRange);
     queue.finish();
     TracyCZoneEnd(KernelRun);
@@ -92,6 +93,7 @@ oclAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius, int
     queue.finish();
     //clearArray(humans);
     TracyCZoneN(immuneCalc,"Check if people are still immune",true);
+#pragma omp parallel for
     for (int i = 0; i < humans->size(); i++) {
         humans->at(i).x = tempx[i];
         humans->at(i).y = tempy[i];
@@ -112,6 +114,7 @@ oclAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius, int
 }
 
 oclAlgo::~oclAlgo() {
+    end();
 }
 
 void oclAlgo::end() {
@@ -148,13 +151,11 @@ oclAlgo::oclAlgo() {
     sources.push_back({str.c_str(),str.length()});
 
     program = cl::Program(context,sources);
-    if(program.build({default_device})!=CL_SUCCESS){
+    if(program.build({default_device},"-I libs/")!=CL_SUCCESS){
         std::cout<<" Error building: "<<program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(default_device)<<"\n";
         exit(1);
     }
-
     //create queue to which we will push commands for the device.
     queue = cl::CommandQueue(context,default_device,0,&ret);
-
     move_infect = cl::Kernel(program, "move_infect");
 }

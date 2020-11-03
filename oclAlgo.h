@@ -16,7 +16,7 @@
 class oclAlgo : public algo {
 private:
     std::default_random_engine randomEngine;
-    std::vector<long> random;
+    long random;
     std::minstd_rand minstdRand;
     cl::Platform default_platform;
     cl::Device default_device;
@@ -30,7 +30,6 @@ private:
     std::vector<int> px;
     std::vector<int> py;
     std::vector<int> pi;
-    cl::Buffer randomBuf;
     cl::Kernel move_infect;
     cl::CommandQueue queue;
     int totalInfected;
