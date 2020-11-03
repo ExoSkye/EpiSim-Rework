@@ -9,6 +9,11 @@
 #include <thread>
 #include <numeric>
 #include <functional>
+struct threadParams {
+    std::vector<human> *humans; std::vector<std::vector<human *>> *grid; int infectChance;
+    int infectRadius; int start; int end; double immuneChance; int immuneLength; int immuneLengthVar;
+    int timestep;
+};
 class multiAlgo : public algo {
 private:
     int totalInfected;
@@ -22,11 +27,12 @@ private:
     int _x, _y;
     grapher* infectRate = nullptr;
     grapher* infectedPeople = nullptr;
-    void threadedFunc(std::vector<human> *humans, std::vector<std::vector<human *>> *grid, int infectChance,
-                      int infectRadius, int start, int end, double immuneChance, int immuneLength, int immuneLengthVar,int timestep);
+    void threadedFunc(threadParams params);
 public:
     void
-    run(std::vector<human> *humans, int infectChance, int infectRadius, int x, int y, double immuneChance, int immuneLength, int immuneLengthVar,int timestep) override;
+    run(std::vector<human> *humans, int infectChance, int infectRadius, int x, int y, double immuneChance,
+        int immuneLength,
+        int immuneLengthVar, int timestep) override;
     ~multiAlgo();
     void end() override;
 };
