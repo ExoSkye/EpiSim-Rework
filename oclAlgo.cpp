@@ -49,14 +49,12 @@ oclAlgo::run(std::vector<human> *humans, int infectChance, int infectRadius, int
     }
     else {
         ZoneScopedN("Changing values")
-#pragma omp parallel for
+#pragma omp simd
         for (int i = 0; i < humans->size(); i++) {
             human person = humans->at(i);
-            {
-                px[i] = person.x;
-                py[i] = person.y;
-                pi[i] = (int) person.infect_info;
-            }
+            px[i] = person.x;
+            py[i] = person.y;
+            pi[i] = (int) person.infect_info;
         }
     }
     //getArray(humans);

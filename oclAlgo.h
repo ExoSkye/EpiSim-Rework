@@ -13,6 +13,8 @@
 #include <iostream>
 #include <fstream>
 #include <random>
+#include "omp.h"
+
 class oclAlgo : public algo {
 private:
     std::default_random_engine randomEngine;

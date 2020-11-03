@@ -1,16 +1,19 @@
 #include "sdlRender.h"
 
-bool sdlRenderer::init(int x, int y)
+bool sdlRenderer::init(int x, int y, bool render)
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
-	window = SDL_CreateWindow("EpiSim", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, x, y, 0);
+	_render = render;
+	if (render) {
+        window = SDL_CreateWindow("EpiSim", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, x, y, 0);
 #ifdef _DEBUG
-    printf("SDL (After window creation) Current error = %s\n",SDL_GetError());
+        printf("SDL (After window creation) Current error = %s\n",SDL_GetError());
 #endif
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+        renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 #ifdef _DEBUG
-    printf("SDL (After renderer creation) Current error = %s\n",SDL_GetError());
+        printf("SDL (After renderer creation) Current error = %s\n",SDL_GetError());
 #endif
+    }
     InfectedPeople = new grapher(1024,"Infected People",16,256,1,true);
     ImmunePeople = new grapher(1024,"Immune People",16,256,1,true);
     SusceptiblePeople = new grapher(1024,"Susceptible People",16,256,1,true);
@@ -63,7 +66,7 @@ bool sdlRenderer::drawScreen(const std::vector<human>& toDraw)
             total_infected += curHuman.peopleInfected;
         }
     }
-    if (!pause) {
+    if (!pause && _render) {
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         /*SDL_Rect screenRect = { 0,0,1024,1024 };
         SDL_RenderDrawRect(renderer, &screenRect);*/

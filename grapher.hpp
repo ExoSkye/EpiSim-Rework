@@ -20,7 +20,7 @@ public:
         _y = y;
         _x_step = x_step;
         _w = write_to_file;
-        window = SDL_CreateWindow(name.c_str(),SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,size*_x_step,y,SDL_WINDOW_ALWAYS_ON_TOP);
+        window = SDL_CreateWindow(name.c_str(),SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,size*_x_step,y,0);
         rend = SDL_CreateRenderer(window,-1,SDL_RENDERER_ACCELERATED);
         data.resize(_size);
         SDL_SetRenderDrawColor(rend,255,255,255,255);

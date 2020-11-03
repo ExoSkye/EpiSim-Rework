@@ -17,8 +17,9 @@ private:
     SDL_Point *InfectedPoints;
     SDL_Point *ImmunePoints;
     SDL_Point *NotInfectedPoints;
+    bool _render;
 public:
-	bool init(int x, int y) override;
+	bool init(int x, int y, bool render) override;
 	bool drawScreen(const std::vector<human>& toDraw) override;
 	void end() override;
 	~sdlRenderer();

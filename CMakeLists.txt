@@ -45,12 +45,6 @@ IF(TRACY MATCHES yes)
     target_compile_definitions(EpiSim PUBLIC TRACY_ENABLE)
 ENDIF()
 
-IF(OPENMP MATCHES yes)
-    find_package(OpenMP REQUIRED)
-    target_compile_definitions(EpiSim PUBLIC OMPEnable)
-    target_link_libraries(EpiSim PRIVATE OpenMP::OpenMP_CXX)
-ENDIF()
-
 IF(MPI MATCHES yes)
     target_compile_definitions(EpiSim PUBLIC MPIEnable)
 ENDIF()
@@ -67,6 +61,14 @@ IF(OPENCL MATCHES yes)
     target_link_libraries(EpiSim PUBLIC OpenCL::OpenCL)
     configure_file(kernel.cl ${CMAKE_CURRENT_BINARY_DIR}/kernel.cl COPYONLY)
     configure_file(libs/RandomCL/generators/mt19937.cl ${CMAKE_CURRENT_BINARY_DIR}/libs/mt19937.cl COPYONLY)
+    set(OPENMP yes)
+ENDIF()
+
+
+IF(OPENMP MATCHES yes)
+    find_package(OpenMP REQUIRED)
+    target_compile_definitions(EpiSim PUBLIC OMPEnable)
+    target_link_libraries(EpiSim PRIVATE OpenMP::OpenMP_CXX)
 ENDIF()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME ${PLATFORM})
