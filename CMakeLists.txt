@@ -11,11 +11,11 @@ set(CMAKE_CXX_STANDARD 20)
 
 include(FindOpenCL)
 
-set(PLATFORM "EpiSim" CACHE STRING "Platform selection (affects output executable name, used for CI artifacts)")
-set(OPENCL "no" CACHE STRING "Choose to use OpenCL or not")
-set(TRACY "no" CACHE STRING "Choose if tracy is disabled")
-set(OPENMP "no" CACHE STRING "Choose if OpenMP is used")
-set(MPI "no" CACHE STRING "Choose if MPI is used")
+option(PLATFORM "Platform selection (affects output executable name, used for CI artifacts)" "EpiSim")
+option(OPENCL "Choose to use OpenCL or not" NO)
+option(TRACY "Choose if tracy is disabled" NO)
+option(OPENMP "Choose if OpenMP is used" NO)
+option(MPI "Choose if MPI is used" NO)
 
 if (${CMAKE_VERSION} VERSION_GREATER "3.13")
     cmake_policy(SET CMP0076 NEW)
@@ -41,11 +41,11 @@ else()
 endif()
 
 
-IF(TRACY MATCHES yes)
+IF(TRACY)
     target_compile_definitions(EpiSim PUBLIC TRACY_ENABLE)
 ENDIF()
 
-IF(MPI MATCHES yes)
+IF(MPI)
     target_compile_definitions(EpiSim PUBLIC MPIEnable)
 ENDIF()
 
@@ -54,7 +54,7 @@ IF(CMAKE_BUILD_TYPE MATCHES Debug AND TRACY MATCHES yes)
     target_compile_definitions(EpiSim PUBLIC TRACY_ENABLE _DEBUG)
 ENDIF()
 
-IF(OPENCL MATCHES yes)
+IF(OPENCL)
     message("OpenCL is enabled")
     target_sources(EpiSim PUBLIC oclAlgo.cpp oclAlgo.h)
     target_compile_definitions(EpiSim PUBLIC OpenCL_Enable)
@@ -65,7 +65,7 @@ IF(OPENCL MATCHES yes)
 ENDIF()
 
 
-IF(OPENMP MATCHES yes)
+IF(OPENMP)
     find_package(OpenMP REQUIRED)
     target_compile_definitions(EpiSim PUBLIC OMPEnable)
     target_link_libraries(EpiSim PRIVATE OpenMP::OpenMP_CXX)
